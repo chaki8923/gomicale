@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,38 @@ import {
   FlatList,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
-import { garbageClassification, categoryConfig } from '../data/sampleData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { categoryConfig } from '../data/sampleData';
+import { fetchGarbageClassification } from '../data/garbageData';
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [garbageClassification, setGarbageClassification] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadGarbageClassification();
+  }, []);
+
+  const loadGarbageClassification = async () => {
+    try {
+      setLoading(true);
+      const municipalityId = await AsyncStorage.getItem('selectedMunicipalityId');
+      
+      if (municipalityId) {
+        const items = await fetchGarbageClassification(municipalityId);
+        setGarbageClassification(items);
+      }
+    } catch (error) {
+      console.error('ごみ分別データの読み込みエラー:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredData = searchQuery
     ? garbageClassification.filter(
@@ -32,6 +57,10 @@ export default function SearchScreen() {
 
   const renderItem = ({ item }) => {
     const config = categoryConfig[item.category];
+    if (!config) {
+      // カテゴリーが存在しない場合はスキップ
+      return null;
+    }
     return (
       <TouchableOpacity
         style={[styles.card, { borderLeftColor: config.color }]}
@@ -48,6 +77,15 @@ export default function SearchScreen() {
       </TouchableOpacity>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#4ECDC4" />
+        <Text style={styles.loadingText}>読み込み中...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -79,7 +117,7 @@ export default function SearchScreen() {
       />
 
       {/* 詳細モーダル */}
-      {selectedItem && (
+      {selectedItem && categoryConfig[selectedItem.category] && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -142,6 +180,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F9FC',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#7F8C8D',
   },
   searchContainer: {
     padding: 15,

@@ -4,65 +4,97 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { garbageSchedule, categoryConfig } from '../data/sampleData';
+import { categoryConfig } from '../data/sampleData';
+import { fetchGarbageSchedule } from '../data/garbageData';
 
 export default function CalendarScreen() {
   const [selectedArea, setSelectedArea] = useState(null);
+  const [selectedMunicipalityId, setSelectedMunicipalityId] = useState(null);
+  const [garbageSchedule, setGarbageSchedule] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadSelectedArea();
   }, []);
 
   useEffect(() => {
-    if (selectedArea) {
+    if (selectedArea && garbageSchedule) {
       generateMarkedDates();
     }
-  }, [selectedArea]);
+  }, [selectedArea, garbageSchedule]);
 
   const loadSelectedArea = async () => {
     try {
+      setLoading(true);
       const area = await AsyncStorage.getItem('selectedArea');
-      if (area) {
+      const municipalityId = await AsyncStorage.getItem('selectedMunicipalityId');
+      
+      if (area && municipalityId) {
         setSelectedArea(area);
+        setSelectedMunicipalityId(municipalityId);
+        
+        const schedule = await fetchGarbageSchedule(municipalityId);
+        setGarbageSchedule(schedule);
       }
     } catch (error) {
       console.error('エリアの読み込みエラー:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const generateMarkedDates = () => {
-    if (!selectedArea) return;
+    if (!selectedArea || !garbageSchedule) return;
 
-    const schedule = garbageSchedule['渋谷区'].areas[selectedArea];
-    const marked = {};
-    const today = new Date();
+    try {
+      const municipalityName = Object.keys(garbageSchedule)[0];
+      if (!municipalityName || !garbageSchedule[municipalityName] || !garbageSchedule[municipalityName].areas) {
+        return;
+      }
+
+      const schedule = garbageSchedule[municipalityName].areas[selectedArea];
+      if (!schedule || typeof schedule !== 'object') return;
+      
+      const marked = {};
+      const today = new Date();
     
-    // 今月と来月のカレンダーにマークを追加
-    for (let month = 0; month < 3; month++) {
-      const currentDate = new Date(today.getFullYear(), today.getMonth() + month, 1);
-      const daysInMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + 1,
-        0
-      ).getDate();
+    // 今月から数ヶ月分のカレンダーにマークを追加
+    for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
+      const currentDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1; // 1-12
+      const daysInMonth = new Date(year, month, 0).getDate();
 
+      // スケジュールから該当月のデータを取得
+      const monthKey = String(month);
+      const monthSchedule = schedule[monthKey];
+      
+      if (!monthSchedule) continue;
+
+      // 各日付をチェック
       for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        const dayOfWeek = date.getDay();
+        const date = new Date(year, month - 1, day);
         const dateString = date.toISOString().split('T')[0];
 
         const garbageTypes = [];
-        Object.keys(schedule).forEach((category) => {
-          if (schedule[category].includes(dayOfWeek)) {
-            garbageTypes.push({
-              category,
-              color: categoryConfig[category].color,
-            });
+        
+        // 各カテゴリーをチェック
+        Object.keys(monthSchedule).forEach((category) => {
+          const days = monthSchedule[category];
+          if (Array.isArray(days) && days.includes(day)) {
+            // categoryConfigに存在するカテゴリーのみ追加
+            if (categoryConfig[category]) {
+              garbageTypes.push({
+                category,
+                color: categoryConfig[category].color,
+              });
+            }
           }
         });
 
@@ -76,7 +108,11 @@ export default function CalendarScreen() {
       }
     }
 
-    setMarkedDates(marked);
+      setMarkedDates(marked);
+    } catch (error) {
+      console.error('カレンダーマーク生成エラー:', error);
+      setMarkedDates({});
+    }
   };
 
   const onDayPress = (day) => {
@@ -84,11 +120,22 @@ export default function CalendarScreen() {
   };
 
   const getGarbageForDate = (dateString) => {
-    if (!markedDates[dateString]) return [];
-    return markedDates[dateString].garbageTypes.map((type) => ({
-      ...categoryConfig[type.category],
-    }));
+    if (!markedDates[dateString] || !markedDates[dateString].garbageTypes) return [];
+    return markedDates[dateString].garbageTypes
+      .filter(type => categoryConfig[type.category])
+      .map((type) => ({
+        ...categoryConfig[type.category],
+      }));
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#4ECDC4" />
+        <Text style={styles.loadingText}>読み込み中...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -175,6 +222,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F9FC',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#7F8C8D',
   },
   noAreaContainer: {
     padding: 40,

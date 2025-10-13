@@ -117,8 +117,38 @@ export const categoryConfig = {
     icon: '♻️',
   },
   bottles: {
-    name: 'びん・缶',
+    name: 'びん',
     color: '#96CEB4',
     icon: '🍶',
+  },
+  cans: {
+    name: 'かん',
+    color: '#95E1D3',
+    icon: '🥫',
+  },
+  plastics: {
+    name: '容器包装プラスチック',
+    color: '#F38181',
+    icon: '📦',
+  },
+  pet_bottles: {
+    name: 'ペットボトル',
+    color: '#AA96DA',
+    icon: '🧴',
+  },
+  paper_and_cloth: {
+    name: '古布・紙類',
+    color: '#FCBAD3',
+    icon: '📰',
+  },
+  hazardous_and_dangerous: {
+    name: '危険・有害ごみ',
+    color: '#FF8C42',
+    icon: '⚠️',
+  },
+  cooking_oil: {
+    name: '家庭廃食用油',
+    color: '#FFD93D',
+    icon: '🛢️',
   },
 };
