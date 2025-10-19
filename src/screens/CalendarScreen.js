@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,40 +7,44 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
-import { fetchGarbageSchedule } from '../data/garbageData';
+import { fetchAreaSchedule } from '../data/garbageData';
 
 export default function CalendarScreen() {
-  const [selectedArea, setSelectedArea] = useState(null);
-  const [selectedMunicipalityId, setSelectedMunicipalityId] = useState(null);
-  const [garbageSchedule, setGarbageSchedule] = useState(null);
+  const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
+  const [areaSchedule, setAreaSchedule] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadSelectedArea();
-  }, []);
+  // 画面にフォーカスが当たるたびにデータを再読み込み
+  useFocusEffect(
+    useCallback(() => {
+      loadSelectedArea();
+    }, [])
+  );
 
   useEffect(() => {
-    if (selectedArea && garbageSchedule) {
+    if (selectedAreaId && areaSchedule) {
       generateMarkedDates();
     }
-  }, [selectedArea, garbageSchedule]);
+  }, [selectedAreaId, areaSchedule]);
 
   const loadSelectedArea = async () => {
     try {
       setLoading(true);
-      const area = await AsyncStorage.getItem('selectedArea');
-      const municipalityId = await AsyncStorage.getItem('selectedMunicipalityId');
+      const areaId = await AsyncStorage.getItem('selectedAreaId');
+      const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       
-      if (area && municipalityId) {
-        setSelectedArea(area);
-        setSelectedMunicipalityId(municipalityId);
+      if (areaId && prefectureId) {
+        setSelectedAreaId(areaId);
+        setSelectedPrefectureId(prefectureId);
         
-        const schedule = await fetchGarbageSchedule(municipalityId);
-        setGarbageSchedule(schedule);
+        const schedule = await fetchAreaSchedule(prefectureId, areaId);
+        setAreaSchedule(schedule.schedule);
       }
     } catch (error) {
       console.error('エリアの読み込みエラー:', error);
@@ -50,63 +54,55 @@ export default function CalendarScreen() {
   };
 
   const generateMarkedDates = () => {
-    if (!selectedArea || !garbageSchedule) return;
+    if (!selectedAreaId || !areaSchedule) return;
 
     try {
-      const municipalityName = Object.keys(garbageSchedule)[0];
-      if (!municipalityName || !garbageSchedule[municipalityName] || !garbageSchedule[municipalityName].areas) {
-        return;
-      }
-
-      const schedule = garbageSchedule[municipalityName].areas[selectedArea];
-      if (!schedule || typeof schedule !== 'object') return;
-      
       const marked = {};
       const today = new Date();
     
-    // 今月から数ヶ月分のカレンダーにマークを追加
-    for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
-      const currentDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1; // 1-12
-      const daysInMonth = new Date(year, month, 0).getDate();
+      // 今月から数ヶ月分のカレンダーにマークを追加
+      for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
+        const currentDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1; // 1-12
+        const daysInMonth = new Date(year, month, 0).getDate();
 
-      // スケジュールから該当月のデータを取得
-      const monthKey = String(month);
-      const monthSchedule = schedule[monthKey];
-      
-      if (!monthSchedule) continue;
-
-      // 各日付をチェック
-      for (let day = 1; day <= daysInMonth; day++) {
-        // タイムゾーンの影響を受けないように、直接日付文字列を作成
-        const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-        const garbageTypes = [];
+        // スケジュールから該当月のデータを取得
+        const monthKey = String(month);
+        const monthSchedule = areaSchedule[monthKey];
         
-        // 各カテゴリーをチェック
-        Object.keys(monthSchedule).forEach((category) => {
-          const days = monthSchedule[category];
-          if (Array.isArray(days) && days.includes(day)) {
-            // categoryConfigに存在するカテゴリーのみ追加
-            if (categoryConfig[category]) {
-              garbageTypes.push({
-                category,
-                color: categoryConfig[category].color,
-              });
-            }
-          }
-        });
+        if (!monthSchedule) continue;
 
-        if (garbageTypes.length > 0) {
-          marked[dateString] = {
-            marked: true,
-            dots: garbageTypes.map((type) => ({ color: type.color })),
-            garbageTypes,
-          };
+        // 各日付をチェック
+        for (let day = 1; day <= daysInMonth; day++) {
+          // タイムゾーンの影響を受けないように、直接日付文字列を作成
+          const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+          const garbageTypes = [];
+          
+          // 各カテゴリーをチェック
+          Object.keys(monthSchedule).forEach((category) => {
+            const days = monthSchedule[category];
+            if (Array.isArray(days) && days.includes(day)) {
+              // categoryConfigに存在するカテゴリーのみ追加
+              if (categoryConfig[category]) {
+                garbageTypes.push({
+                  category,
+                  color: categoryConfig[category].color,
+                });
+              }
+            }
+          });
+
+          if (garbageTypes.length > 0) {
+            marked[dateString] = {
+              marked: true,
+              dots: garbageTypes.map((type) => ({ color: type.color })),
+              garbageTypes,
+            };
+          }
         }
       }
-    }
 
       setMarkedDates(marked);
     } catch (error) {
@@ -139,10 +135,10 @@ export default function CalendarScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {!selectedArea ? (
+      {!selectedAreaId ? (
         <View style={styles.noAreaContainer}>
           <Text style={styles.noAreaText}>
-            ホーム画面で地域を選択してください
+            ホーム画面でエリアを選択してください
           </Text>
         </View>
       ) : (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchGarbageClassification } from '../data/garbageData';
@@ -20,17 +21,20 @@ export default function SearchScreen() {
   const [garbageClassification, setGarbageClassification] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadGarbageClassification();
-  }, []);
+  // 画面にフォーカスが当たるたびにデータを再読み込み
+  useFocusEffect(
+    useCallback(() => {
+      loadGarbageClassification();
+    }, [])
+  );
 
   const loadGarbageClassification = async () => {
     try {
       setLoading(true);
-      const municipalityId = await AsyncStorage.getItem('selectedMunicipalityId');
+      const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       
-      if (municipalityId) {
-        const items = await fetchGarbageClassification(municipalityId);
+      if (prefectureId) {
+        const items = await fetchGarbageClassification(prefectureId);
         setGarbageClassification(items);
       }
     } catch (error) {

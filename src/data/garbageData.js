@@ -33,19 +33,64 @@ const normalizeSchedule = (schedule) => {
 };
 
 /**
- * 市町村のごみ収集スケジュールを取得
- * @param {string} municipalityId - 市町村ID
+ * 都道府県のエリア一覧を取得
+ * @param {string} municipalityId - 都道府県ID
+ * @returns {Promise<Array>} エリアの配列
+ */
+export const fetchAreas = async (municipalityId) => {
+  try {
+    const areasSnapshot = await getDocs(
+      collection(db, 'municipalities', municipalityId, 'areas')
+    );
+
+    return areasSnapshot.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().name,
+      schedule: normalizeSchedule(doc.data().schedule)
+    }));
+  } catch (error) {
+    console.error('Error fetching areas:', error);
+    throw error;
+  }
+};
+
+/**
+ * エリアIDから収集スケジュールを取得
+ * @param {string} municipalityId - 都道府県ID
+ * @param {string} areaId - エリアID
+ * @returns {Promise<Object>} 収集スケジュール
+ */
+export const fetchAreaSchedule = async (municipalityId, areaId) => {
+  try {
+    const areaDoc = await getDoc(doc(db, 'municipalities', municipalityId, 'areas', areaId));
+    if (!areaDoc.exists()) {
+      throw new Error('エリアが見つかりません');
+    }
+
+    return {
+      name: areaDoc.data().name,
+      schedule: normalizeSchedule(areaDoc.data().schedule)
+    };
+  } catch (error) {
+    console.error('Error fetching area schedule:', error);
+    throw error;
+  }
+};
+
+/**
+ * 都道府県のごみ収集スケジュールを取得（旧バージョン互換性のため）
+ * @param {string} municipalityId - 都道府県ID
  * @returns {Promise<Object>} 地域別の収集スケジュール
  */
 export const fetchGarbageSchedule = async (municipalityId) => {
   try {
-    // 市町村情報を取得
+    // 都道府県情報を取得
     const municipalityDoc = await getDoc(doc(db, 'municipalities', municipalityId));
     if (!municipalityDoc.exists()) {
-      throw new Error('市町村が見つかりません');
+      throw new Error('都道府県が見つかりません');
     }
 
-    const municipalityName = municipalityDoc.data().name;
+    const prefecture = municipalityDoc.data().prefecture;
 
     // 地域データを取得
     const areasSnapshot = await getDocs(
@@ -60,7 +105,7 @@ export const fetchGarbageSchedule = async (municipalityId) => {
     });
 
     return {
-      [municipalityName]: {
+      [prefecture]: {
         areas: areas
       }
     };
@@ -94,15 +139,15 @@ export const fetchGarbageClassification = async (municipalityId) => {
 };
 
 /**
- * すべての市町村を取得
- * @returns {Promise<Array>} 市町村の配列
+ * すべての都道府県を取得
+ * @returns {Promise<Array>} 都道府県の配列
  */
 export const fetchMunicipalities = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'municipalities'));
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      prefecture: doc.data().prefecture
     }));
   } catch (error) {
     console.error('Error fetching municipalities:', error);
@@ -111,19 +156,19 @@ export const fetchMunicipalities = async () => {
 };
 
 /**
- * 市町村IDで市町村名を取得
- * @param {string} municipalityId - 市町村ID
- * @returns {Promise<string>} 市町村名
+ * 都道府県IDで都道府県名を取得
+ * @param {string} municipalityId - 都道府県ID
+ * @returns {Promise<string>} 都道府県名
  */
 export const getMunicipalityName = async (municipalityId) => {
   try {
     const municipalityDoc = await getDoc(doc(db, 'municipalities', municipalityId));
     if (municipalityDoc.exists()) {
-      return municipalityDoc.data().name;
+      return municipalityDoc.data().prefecture;
     }
     return null;
   } catch (error) {
-    console.error('Error fetching municipality name:', error);
+    console.error('Error fetching municipality prefecture:', error);
     throw error;
   }
 };

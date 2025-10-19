@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,57 +8,63 @@ import {
   Modal,
   ActivityIndicator,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
-import { fetchMunicipalities, fetchGarbageSchedule } from '../data/garbageData';
+import { fetchMunicipalities, fetchAreas, fetchAreaSchedule } from '../data/garbageData';
 
 export default function HomeScreen() {
-  const [selectedArea, setSelectedArea] = useState(null);
-  const [selectedMunicipalityId, setSelectedMunicipalityId] = useState(null);
-  const [selectedMunicipalityName, setSelectedMunicipalityName] = useState(null);
-  const [municipalities, setMunicipalities] = useState([]);
+  const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [selectedAreaName, setSelectedAreaName] = useState(null);
+  const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
+  const [selectedPrefecture, setSelectedPrefecture] = useState(null);
+  const [prefectures, setPrefectures] = useState([]);
   const [areas, setAreas] = useState([]);
-  const [garbageSchedule, setGarbageSchedule] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [municipalityModalVisible, setMunicipalityModalVisible] = useState(false);
+  const [areaSchedule, setAreaSchedule] = useState(null);
+  const [areaModalVisible, setAreaModalVisible] = useState(false);
+  const [prefectureModalVisible, setPrefectureModalVisible] = useState(false);
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // 画面にフォーカスが当たるたびにデータを再読み込み
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   useEffect(() => {
-    if (selectedArea && garbageSchedule) {
+    if (selectedAreaId && areaSchedule) {
       updateTodaySchedule();
     }
-  }, [selectedArea, garbageSchedule]);
+  }, [selectedAreaId, areaSchedule]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       
-      // 市町村一覧を取得
-      const municipalitiesList = await fetchMunicipalities();
-      setMunicipalities(municipalitiesList);
+      // 都道府県一覧を取得
+      const prefecturesList = await fetchMunicipalities();
+      setPrefectures(prefecturesList);
 
-      // 保存されている市町村IDと地域を読み込み
-      const savedMunicipalityId = await AsyncStorage.getItem('selectedMunicipalityId');
-      const savedArea = await AsyncStorage.getItem('selectedArea');
+      // 保存されている都道府県IDとエリアIDを読み込み
+      const savedPrefectureId = await AsyncStorage.getItem('selectedPrefectureId');
+      const savedAreaId = await AsyncStorage.getItem('selectedAreaId');
+      const savedAreaName = await AsyncStorage.getItem('selectedAreaName');
 
-      if (savedMunicipalityId && municipalitiesList.length > 0) {
-        const municipality = municipalitiesList.find(m => m.id === savedMunicipalityId);
-        if (municipality) {
-          setSelectedMunicipalityId(savedMunicipalityId);
-          setSelectedMunicipalityName(`${municipality.prefecture}${municipality.name}`);
-          await loadMunicipalityData(savedMunicipalityId, savedArea);
+      if (savedPrefectureId && prefecturesList.length > 0) {
+        const prefecture = prefecturesList.find(p => p.id === savedPrefectureId);
+        if (prefecture) {
+          setSelectedPrefectureId(savedPrefectureId);
+          setSelectedPrefecture(prefecture.prefecture);
+          await loadPrefectureData(savedPrefectureId, savedAreaId, savedAreaName);
         } else {
-          // 保存された市町村が見つからない場合、選択を促す
-          setMunicipalityModalVisible(true);
+          // 保存された都道府県が見つからない場合、選択を促す
+          setPrefectureModalVisible(true);
         }
-      } else if (municipalitiesList.length > 0) {
-        // 市町村選択を促す
-        setMunicipalityModalVisible(true);
+      } else if (prefecturesList.length > 0) {
+        // 都道府県選択を促す
+        setPrefectureModalVisible(true);
       }
     } catch (error) {
       console.error('データの読み込みエラー:', error);
@@ -68,56 +74,70 @@ export default function HomeScreen() {
     }
   };
 
-  const loadMunicipalityData = async (municipalityId, savedArea = null) => {
+  const loadPrefectureData = async (prefectureId, savedAreaId = null, savedAreaName = null) => {
     try {
-      const schedule = await fetchGarbageSchedule(municipalityId);
-      setGarbageSchedule(schedule);
-
-      // 地域一覧を取得
-      const municipalityName = Object.keys(schedule)[0];
-      const areasList = Object.keys(schedule[municipalityName].areas);
+      // エリア一覧を取得
+      const areasList = await fetchAreas(prefectureId);
       setAreas(areasList);
 
-      if (savedArea && areasList.includes(savedArea)) {
-        setSelectedArea(savedArea);
-      } else if (!savedArea && areasList.length > 0) {
-        setModalVisible(true);
+      if (savedAreaId && savedAreaName) {
+        const area = areasList.find(a => a.id === savedAreaId);
+        if (area) {
+          setSelectedAreaId(savedAreaId);
+          setSelectedAreaName(savedAreaName);
+          setAreaSchedule(area.schedule);
+        } else {
+          setAreaModalVisible(true);
+        }
+      } else if (areasList.length > 0) {
+        setAreaModalVisible(true);
       }
     } catch (error) {
-      console.error('市町村データの読み込みエラー:', error);
+      console.error('都道府県データの読み込みエラー:', error);
     }
   };
 
-  const selectMunicipality = async (municipality) => {
+  const selectPrefecture = async (prefecture) => {
     try {
-      setSelectedMunicipalityId(municipality.id);
-      setSelectedMunicipalityName(`${municipality.prefecture}${municipality.name}`);
-      await AsyncStorage.setItem('selectedMunicipalityId', municipality.id);
-      await loadMunicipalityData(municipality.id);
-      setMunicipalityModalVisible(false);
-      setModalVisible(true);
+      setSelectedPrefectureId(prefecture.id);
+      setSelectedPrefecture(prefecture.prefecture);
+      await AsyncStorage.setItem('selectedPrefectureId', prefecture.id);
+      
+      // 以前のエリア選択をクリア
+      setSelectedAreaId(null);
+      setSelectedAreaName(null);
+      await AsyncStorage.removeItem('selectedAreaId');
+      await AsyncStorage.removeItem('selectedAreaName');
+      
+      await loadPrefectureData(prefecture.id);
+      setPrefectureModalVisible(false);
+      setAreaModalVisible(true);
     } catch (error) {
-      console.error('市町村の選択エラー:', error);
+      console.error('都道府県の選択エラー:', error);
     }
   };
 
   const selectArea = async (area) => {
     try {
-      await AsyncStorage.setItem('selectedArea', area);
-      await AsyncStorage.setItem('selectedMunicipalityId', selectedMunicipalityId);
-      setSelectedArea(area);
-      setModalVisible(false);
+      await AsyncStorage.setItem('selectedAreaId', area.id);
+      await AsyncStorage.setItem('selectedAreaName', area.name);
+      await AsyncStorage.setItem('selectedPrefectureId', selectedPrefectureId);
+      
+      setSelectedAreaId(area.id);
+      setSelectedAreaName(area.name);
+      setAreaSchedule(area.schedule);
+      setAreaModalVisible(false);
     } catch (error) {
       console.error('エリアの保存エラー:', error);
     }
   };
 
   const changeLocation = () => {
-    setMunicipalityModalVisible(true);
+    setPrefectureModalVisible(true);
   };
 
   const updateTodaySchedule = () => {
-    if (!garbageSchedule || !selectedArea) {
+    if (!areaSchedule) {
       setTodaySchedule([]);
       return;
     }
@@ -127,33 +147,23 @@ export default function HomeScreen() {
       const month = today.getMonth() + 1; // 1-12
       const day = today.getDate(); // 1-31
       
-      const municipalityName = Object.keys(garbageSchedule)[0];
-      if (!municipalityName || !garbageSchedule[municipalityName] || !garbageSchedule[municipalityName].areas) {
-        setTodaySchedule([]);
-        return;
-      }
-
-      const schedule = garbageSchedule[municipalityName].areas[selectedArea];
       const todayGarbage = [];
-
-      if (schedule && typeof schedule === 'object') {
-        const monthKey = String(month);
-        const monthSchedule = schedule[monthKey];
-        
-        if (monthSchedule && typeof monthSchedule === 'object') {
-          Object.keys(monthSchedule).forEach((category) => {
-            const days = monthSchedule[category];
-            if (Array.isArray(days) && days.includes(day)) {
-              // categoryConfigに存在するカテゴリーのみ追加
-              if (categoryConfig[category]) {
-                todayGarbage.push({
-                  category,
-                  ...categoryConfig[category],
-                });
-              }
+      const monthKey = String(month);
+      const monthSchedule = areaSchedule[monthKey];
+      
+      if (monthSchedule && typeof monthSchedule === 'object') {
+        Object.keys(monthSchedule).forEach((category) => {
+          const days = monthSchedule[category];
+          if (Array.isArray(days) && days.includes(day)) {
+            // categoryConfigに存在するカテゴリーのみ追加
+            if (categoryConfig[category]) {
+              todayGarbage.push({
+                category,
+                ...categoryConfig[category],
+              });
             }
-          });
-        }
+          }
+        });
       }
 
       setTodaySchedule(todayGarbage);
@@ -164,19 +174,9 @@ export default function HomeScreen() {
   };
 
   const getNextSchedule = () => {
-    if (!selectedArea || !garbageSchedule) return [];
+    if (!selectedAreaId || !areaSchedule) return [];
     
     try {
-      const municipalityName = Object.keys(garbageSchedule)[0];
-      if (!municipalityName || !garbageSchedule[municipalityName] || !garbageSchedule[municipalityName].areas) {
-        return [];
-      }
-
-      const schedule = garbageSchedule[municipalityName].areas[selectedArea];
-      if (!schedule || typeof schedule !== 'object') {
-        return [];
-      }
-
       const today = new Date();
       const currentDay = today.getDate();
       const currentMonth = today.getMonth() + 1;
@@ -188,7 +188,7 @@ export default function HomeScreen() {
         const checkDate = new Date(currentYear, currentMonth - 1 + monthOffset, 1);
         const checkMonth = checkDate.getMonth() + 1;
         const monthKey = String(checkMonth);
-        const monthSchedule = schedule[monthKey];
+        const monthSchedule = areaSchedule[monthKey];
         
         if (!monthSchedule || typeof monthSchedule !== 'object') continue;
 
@@ -247,15 +247,15 @@ export default function HomeScreen() {
           onPress={changeLocation}
         >
           <Text style={styles.municipalityButtonText}>
-            📍 {selectedMunicipalityName || '市町村を選択'}
+            📍 {selectedPrefecture || '都道府県を選択'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.areaButton}
-          onPress={() => setModalVisible(true)}
+          onPress={() => setAreaModalVisible(true)}
         >
           <Text style={styles.areaButtonText}>
-            🏘️ {selectedArea || '地域を選択'}
+            🏘️ {selectedAreaName || 'エリアを選択'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -302,37 +302,37 @@ export default function HomeScreen() {
         ))}
       </View>
 
-      {/* 市町村選択モーダル */}
+      {/* 都道府県選択モーダル */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={municipalityModalVisible}
-        onRequestClose={() => setMunicipalityModalVisible(false)}
+        visible={prefectureModalVisible}
+        onRequestClose={() => setPrefectureModalVisible(false)}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>市町村を選択してください</Text>
-            {municipalities.length === 0 ? (
+            <Text style={styles.modalTitle}>都道府県を選択してください</Text>
+            {prefectures.length === 0 ? (
               <Text style={styles.noDataText}>
-                市町村データがありません。管理画面から登録してください。
+                都道府県データがありません。管理画面から登録してください。
               </Text>
             ) : (
-              municipalities.map((municipality, index) => (
+              prefectures.map((prefecture, index) => (
                 <TouchableOpacity
                   key={index}
                   style={styles.modalButton}
-                  onPress={() => selectMunicipality(municipality)}
+                  onPress={() => selectPrefecture(prefecture)}
                 >
                   <Text style={styles.modalButtonText}>
-                    {municipality.prefecture} {municipality.name}
+                    {prefecture.prefecture}
                   </Text>
                 </TouchableOpacity>
               ))
             )}
-            {selectedMunicipalityId && (
+            {selectedPrefectureId && (
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalCancelButton]}
-                onPress={() => setMunicipalityModalVisible(false)}
+                onPress={() => setPrefectureModalVisible(false)}
               >
                 <Text style={styles.modalCancelText}>キャンセル</Text>
               </TouchableOpacity>
@@ -341,19 +341,19 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
-      {/* 地域選択モーダル */}
+      {/* エリア選択モーダル */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        visible={areaModalVisible}
+        onRequestClose={() => setAreaModalVisible(false)}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>地域を選択してください</Text>
+            <Text style={styles.modalTitle}>エリアを選択してください</Text>
             {areas.length === 0 ? (
               <Text style={styles.noDataText}>
-                地域データがありません。管理画面から登録してください。
+                エリアデータがありません。管理画面から登録してください。
               </Text>
             ) : (
               areas.map((area, index) => (
@@ -362,13 +362,13 @@ export default function HomeScreen() {
                   style={styles.modalButton}
                   onPress={() => selectArea(area)}
                 >
-                  <Text style={styles.modalButtonText}>{area}</Text>
+                  <Text style={styles.modalButtonText}>{area.name}</Text>
                 </TouchableOpacity>
               ))
             )}
             <TouchableOpacity
               style={[styles.modalButton, styles.modalCancelButton]}
-              onPress={() => setModalVisible(false)}
+              onPress={() => setAreaModalVisible(false)}
             >
               <Text style={styles.modalCancelText}>キャンセル</Text>
             </TouchableOpacity>
