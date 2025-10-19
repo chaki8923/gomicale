@@ -6,15 +6,19 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  ScrollView,
   Modal,
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchGarbageClassification } from '../data/garbageData';
 
 export default function SearchScreen() {
+  const { t, i18n } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,10 +36,14 @@ export default function SearchScreen() {
     try {
       setLoading(true);
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
+      const areaId = await AsyncStorage.getItem('selectedAreaId');
       
-      if (prefectureId) {
-        const items = await fetchGarbageClassification(prefectureId);
+      if (prefectureId && areaId) {
+        const items = await fetchGarbageClassification(prefectureId, areaId);
         setGarbageClassification(items);
+      } else {
+        // エリアが選択されていない場合は空配列
+        setGarbageClassification([]);
       }
     } catch (error) {
       console.error('ごみ分別データの読み込みエラー:', error);
@@ -86,7 +94,7 @@ export default function SearchScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <ActivityIndicator size="large" color="#4ECDC4" />
-        <Text style={styles.loadingText}>読み込み中...</Text>
+        <Text style={styles.loadingText}>{t('search.loading')}</Text>
       </View>
     );
   }
@@ -96,7 +104,7 @@ export default function SearchScreen() {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="ごみの名前を入力（例: ペットボトル）"
+          placeholder={t('search.placeholder')}
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCapitalize="none"
@@ -113,8 +121,8 @@ export default function SearchScreen() {
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
               {searchQuery
-                ? '該当するごみが見つかりませんでした'
-                : 'ごみの名前を検索してください'}
+                ? t('search.noResults')
+                : t('search.searchPrompt')}
             </Text>
           </View>
         }
@@ -128,52 +136,58 @@ export default function SearchScreen() {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View
-                style={[
-                  styles.modalHeader,
-                  { backgroundColor: categoryConfig[selectedItem.category].color },
-                ]}
-              >
-                <Text style={styles.modalIcon}>
-                  {categoryConfig[selectedItem.category].icon}
-                </Text>
-                <Text style={styles.modalTitle}>{selectedItem.name}</Text>
-              </View>
-
-              <View style={styles.modalBody}>
-                <View style={styles.categoryBadgeLarge}>
-                  <Text style={styles.categoryTextLarge}>
-                    {categoryConfig[selectedItem.category].name}
-                  </Text>
-                </View>
-
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>出し方</Text>
-                  <Text style={styles.sectionText}>
-                    {selectedItem.description}
-                  </Text>
-                </View>
-
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>例</Text>
-                  {selectedItem.examples.map((example, index) => (
-                    <Text key={index} style={styles.exampleText}>
-                      • {example}
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+                <View style={styles.modalContent}>
+                  <View
+                    style={[
+                      styles.modalHeader,
+                      { backgroundColor: categoryConfig[selectedItem.category].color },
+                    ]}
+                  >
+                    <Text style={styles.modalIcon}>
+                      {categoryConfig[selectedItem.category].icon}
                     </Text>
-                  ))}
-                </View>
-              </View>
+                    <Text style={styles.modalTitle}>{selectedItem.name}</Text>
+                  </View>
 
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>閉じる</Text>
-              </TouchableOpacity>
+                  <ScrollView style={styles.modalScrollView}>
+                    <View style={styles.modalBody}>
+                      <View style={styles.categoryBadgeLarge}>
+                        <Text style={styles.categoryTextLarge}>
+                          {categoryConfig[selectedItem.category].name}
+                        </Text>
+                      </View>
+
+                      <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>{t('search.howToDispose')}</Text>
+                        <Text style={styles.sectionText}>
+                          {selectedItem.description}
+                        </Text>
+                      </View>
+
+                      <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>{t('search.examples')}</Text>
+                        {selectedItem.examples.map((example, index) => (
+                          <Text key={index} style={styles.exampleText}>
+                            • {example}
+                          </Text>
+                        ))}
+                      </View>
+                    </View>
+                  </ScrollView>
+
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.closeButtonText}>{t('search.close')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
-          </View>
+          </TouchableWithoutFeedback>
         </Modal>
       )}
     </View>
@@ -271,6 +285,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '80%',
+  },
+  modalScrollView: {
+    maxHeight: 400,
   },
   modalHeader: {
     padding: 25,

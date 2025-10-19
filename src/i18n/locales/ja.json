@@ -1,0 +1,74 @@
+{
+  "app": {
+    "title": "ごみカレ 🗑️"
+  },
+  "tabs": {
+    "home": "ホーム",
+    "calendar": "カレンダー",
+    "search": "検索"
+  },
+  "home": {
+    "selectPrefecture": "都道府県を選択",
+    "selectArea": "エリアを選択",
+    "todayCollection": "今日の収集",
+    "noCollection": "今日の収集はありません",
+    "nextCollection": "次回の収集予定",
+    "today": "今日",
+    "tomorrow": "明日",
+    "daysLater": "{{days}}日後（{{dayName}}曜日）",
+    "selectPrefectureTitle": "都道府県を選択してください",
+    "selectAreaTitle": "エリアを選択してください",
+    "noPrefectureData": "都道府県データがありません。管理画面から登録してください。",
+    "noAreaData": "エリアデータがありません。管理画面から登録してください。",
+    "cancel": "キャンセル",
+    "loading": "読み込み中...",
+    "dataLoadError": "データの読み込みに失敗しました"
+  },
+  "calendar": {
+    "selectAreaPrompt": "ホーム画面でエリアを選択してください",
+    "collectionSchedule": "{{date}} の収集予定",
+    "noSchedule": "収集はありません",
+    "legend": "凡例",
+    "loading": "読み込み中..."
+  },
+  "search": {
+    "placeholder": "ごみの名前を入力（例: ペットボトル）",
+    "noResults": "該当するごみが見つかりませんでした",
+    "searchPrompt": "ごみの名前を検索してください",
+    "howToDispose": "出し方",
+    "examples": "例",
+    "close": "閉じる",
+    "loading": "読み込み中..."
+  },
+  "categories": {
+    "burnable": "燃やすごみ",
+    "nonBurnable": "燃やさないごみ",
+    "recyclable": "資源ごみ",
+    "bottles": "びん",
+    "cans": "かん",
+    "plastics": "容器包装プラスチック",
+    "pet_bottles": "ペットボトル",
+    "paper_and_cloth": "古布・紙類",
+    "hazardous_and_dangerous": "危険・有害ごみ",
+    "cooking_oil": "家庭廃食用油",
+    "bottles_and_cans": "びん・缶・小型電化製品",
+    "resources": "資源物",
+    "metal_pottery_glass": "金属・陶器・ガラス"
+  },
+  "weekdays": {
+    "sun": "日",
+    "mon": "月",
+    "tue": "火",
+    "wed": "水",
+    "thu": "木",
+    "fri": "金",
+    "sat": "土"
+  },
+  "settings": {
+    "language": "言語",
+    "selectLanguage": "言語を選択してください",
+    "japanese": "日本語",
+    "english": "English"
+  }
+}
+

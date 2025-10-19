@@ -8,11 +8,13 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchAreaSchedule } from '../data/garbageData';
 
 export default function CalendarScreen() {
+  const { t, i18n } = useTranslation();
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
   const [areaSchedule, setAreaSchedule] = useState(null);
@@ -128,7 +130,7 @@ export default function CalendarScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <ActivityIndicator size="large" color="#4ECDC4" />
-        <Text style={styles.loadingText}>読み込み中...</Text>
+        <Text style={styles.loadingText}>{t('calendar.loading')}</Text>
       </View>
     );
   }
@@ -138,7 +140,7 @@ export default function CalendarScreen() {
       {!selectedAreaId ? (
         <View style={styles.noAreaContainer}>
           <Text style={styles.noAreaText}>
-            ホーム画面でエリアを選択してください
+            {t('calendar.selectAreaPrompt')}
           </Text>
         </View>
       ) : (
@@ -156,7 +158,7 @@ export default function CalendarScreen() {
                 }),
               }}
               onDayPress={onDayPress}
-              monthFormat={'yyyy年 MM月'}
+              monthFormat={i18n.language === 'ja' ? 'yyyy年 MM月' : 'MMMM yyyy'}
               theme={{
                 todayTextColor: '#4ECDC4',
                 selectedDayBackgroundColor: '#4ECDC4',
@@ -172,7 +174,7 @@ export default function CalendarScreen() {
           {selectedDate && (
             <View style={styles.detailContainer}>
               <Text style={styles.detailTitle}>
-                {selectedDate} の収集予定
+                {t('calendar.collectionSchedule', { date: selectedDate })}
               </Text>
               {getGarbageForDate(selectedDate).length > 0 ? (
                 getGarbageForDate(selectedDate).map((item, index) => (
@@ -185,13 +187,13 @@ export default function CalendarScreen() {
                   </View>
                 ))
               ) : (
-                <Text style={styles.noSchedule}>収集はありません</Text>
+                <Text style={styles.noSchedule}>{t('calendar.noSchedule')}</Text>
               )}
             </View>
           )}
 
           <View style={styles.legendContainer}>
-            <Text style={styles.legendTitle}>凡例</Text>
+            <Text style={styles.legendTitle}>{t('calendar.legend')}</Text>
             <View style={styles.legendGrid}>
               {Object.keys(categoryConfig).map((key, index) => (
                 <View key={index} style={styles.legendItem}>

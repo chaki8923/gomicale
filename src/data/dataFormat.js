@@ -1,3 +1,5 @@
+import i18n from '../i18n/i18n';
+
 // サンプルデータ: 東京都渋谷区のごみ収集スケジュール
 export const garbageSchedule = {
   '渋谷区': {
@@ -99,61 +101,97 @@ export const garbageClassification = [
   },
 ];
 
-// ごみカテゴリーの日本語名とカラー
+// ごみカテゴリーの設定（多言語対応）
 export const categoryConfig = {
   burnable: {
-    name: '燃やすごみ',
+    get name() {
+      return i18n.t('categories.burnable');
+    },
     color: '#FF6B6B',
     icon: '🔥',
   },
   nonBurnable: {
-    name: '燃やさないごみ',
+    get name() {
+      return i18n.t('categories.nonBurnable');
+    },
     color: '#4ECDC4',
     icon: '🚫',
   },
   recyclable: {
-    name: '資源ごみ',
+    get name() {
+      return i18n.t('categories.recyclable');
+    },
     color: '#45B7D1',
     icon: '♻️',
   },
   bottles: {
-    name: 'びん',
+    get name() {
+      return i18n.t('categories.bottles');
+    },
     color: '#96CEB4',
     icon: '🍶',
   },
   cans: {
-    name: 'かん',
+    get name() {
+      return i18n.t('categories.cans');
+    },
     color: '#95E1D3',
     icon: '🥫',
   },
   plastics: {
-    name: '容器包装プラスチック',
+    get name() {
+      return i18n.t('categories.plastics');
+    },
     color: '#F38181',
     icon: '📦',
   },
   pet_bottles: {
-    name: 'ペットボトル',
+    get name() {
+      return i18n.t('categories.pet_bottles');
+    },
     color: '#AA96DA',
     icon: '🧴',
   },
   paper_and_cloth: {
-    name: '古布・紙類',
+    get name() {
+      return i18n.t('categories.paper_and_cloth');
+    },
     color: '#FCBAD3',
     icon: '📰',
   },
   hazardous_and_dangerous: {
-    name: '危険・有害ごみ',
+    get name() {
+      return i18n.t('categories.hazardous_and_dangerous');
+    },
     color: '#FF8C42',
     icon: '⚠️',
   },
   cooking_oil: {
-    name: '家庭廃食用油',
+    get name() {
+      return i18n.t('categories.cooking_oil');
+    },
     color: '#FFD93D',
     icon: '🛢️',
   },
   bottles_and_cans: {
-    name: 'びん・缶・小型電化製品',
+    get name() {
+      return i18n.t('categories.bottles_and_cans');
+    },
     color: '#7FCDCD',
     icon: '♻️',
+  },
+  resources: {
+    get name() {
+      return i18n.t('categories.resources');
+    },
+    color: '#6BCF7F',
+    icon: '📦',
+  },
+  metal_pottery_glass: {
+    get name() {
+      return i18n.t('categories.metal_pottery_glass');
+    },
+    color: '#8B9DC3',
+    icon: '🍶',
   },
 };

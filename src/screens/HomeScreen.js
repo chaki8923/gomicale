@@ -9,11 +9,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchMunicipalities, fetchAreas, fetchAreaSchedule } from '../data/garbageData';
+import { saveLanguage } from '../i18n/i18n';
 
 export default function HomeScreen() {
+  const { t, i18n } = useTranslation();
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [selectedAreaName, setSelectedAreaName] = useState(null);
   const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
@@ -23,6 +26,7 @@ export default function HomeScreen() {
   const [areaSchedule, setAreaSchedule] = useState(null);
   const [areaModalVisible, setAreaModalVisible] = useState(false);
   const [prefectureModalVisible, setPrefectureModalVisible] = useState(false);
+  const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,7 +72,7 @@ export default function HomeScreen() {
       }
     } catch (error) {
       console.error('データの読み込みエラー:', error);
-      alert('データの読み込みに失敗しました');
+      alert(t('home.dataLoadError'));
     } finally {
       setLoading(false);
     }
@@ -80,11 +84,11 @@ export default function HomeScreen() {
       const areasList = await fetchAreas(prefectureId);
       setAreas(areasList);
 
-      if (savedAreaId && savedAreaName) {
+      if (savedAreaId) {
         const area = areasList.find(a => a.id === savedAreaId);
         if (area) {
           setSelectedAreaId(savedAreaId);
-          setSelectedAreaName(savedAreaName);
+          setSelectedAreaName(area.name); // エリアリストから最新の名前を取得
           setAreaSchedule(area.schedule);
         } else {
           setAreaModalVisible(true);
@@ -134,6 +138,18 @@ export default function HomeScreen() {
 
   const changeLocation = () => {
     setPrefectureModalVisible(true);
+  };
+
+  const changeLanguage = async (lang) => {
+    try {
+      await i18n.changeLanguage(lang);
+      await saveLanguage(lang);
+      setLanguageModalVisible(false);
+      // データを再読み込みして言語変更を反映
+      loadData();
+    } catch (error) {
+      console.error('言語変更エラー:', error);
+    }
   };
 
   const updateTodaySchedule = () => {
@@ -229,11 +245,16 @@ export default function HomeScreen() {
     }
   };
 
+  const getWeekdayName = (dayIndex) => {
+    const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    return t(`weekdays.${weekdays[dayIndex]}`);
+  };
+
   if (loading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <ActivityIndicator size="large" color="#4ECDC4" />
-        <Text style={styles.loadingText}>読み込み中...</Text>
+        <Text style={styles.loadingText}>{t('home.loading')}</Text>
       </View>
     );
   }
@@ -241,13 +262,23 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>ごみカレ 🗑️</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{t('app.title')}</Text>
+          <TouchableOpacity
+            style={styles.languageButton}
+            onPress={() => setLanguageModalVisible(true)}
+          >
+            <Text style={styles.languageButtonText}>
+              🌐 {i18n.language.toUpperCase()}
+            </Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           style={styles.municipalityButton}
           onPress={changeLocation}
         >
           <Text style={styles.municipalityButtonText}>
-            📍 {selectedPrefecture || '都道府県を選択'}
+            📍 {selectedPrefecture || t('home.selectPrefecture')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -255,14 +286,14 @@ export default function HomeScreen() {
           onPress={() => setAreaModalVisible(true)}
         >
           <Text style={styles.areaButtonText}>
-            🏘️ {selectedAreaName || 'エリアを選択'}
+            🏘️ {selectedAreaName || t('home.selectArea')}
           </Text>
         </TouchableOpacity>
       </View>
 
       {todaySchedule.length > 0 ? (
         <View style={styles.todaySection}>
-          <Text style={styles.sectionTitle}>今日の収集</Text>
+          <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
           {todaySchedule.map((item, index) => (
             <View
               key={index}
@@ -275,13 +306,13 @@ export default function HomeScreen() {
         </View>
       ) : (
         <View style={styles.todaySection}>
-          <Text style={styles.sectionTitle}>今日の収集</Text>
-          <Text style={styles.noSchedule}>今日の収集はありません</Text>
+          <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
+          <Text style={styles.noSchedule}>{t('home.noCollection')}</Text>
         </View>
       )}
 
       <View style={styles.nextSection}>
-        <Text style={styles.sectionTitle}>次回の収集予定</Text>
+        <Text style={styles.sectionTitle}>{t('home.nextCollection')}</Text>
         {getNextSchedule().map((item, index) => (
           <View
             key={index}
@@ -292,10 +323,10 @@ export default function HomeScreen() {
               <Text style={styles.cardTitle}>{item.name}</Text>
               <Text style={styles.cardSubtitle}>
                 {item.daysUntil === 0
-                  ? '今日'
+                  ? t('home.today')
                   : item.daysUntil === 1
-                  ? '明日'
-                  : `${item.daysUntil}日後（${item.dayName}曜日）`}
+                  ? t('home.tomorrow')
+                  : t('home.daysLater', { days: item.daysUntil, dayName: getWeekdayName(item.date.getDay()) })}
               </Text>
             </View>
           </View>
@@ -311,30 +342,32 @@ export default function HomeScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>都道府県を選択してください</Text>
-            {prefectures.length === 0 ? (
-              <Text style={styles.noDataText}>
-                都道府県データがありません。管理画面から登録してください。
-              </Text>
-            ) : (
-              prefectures.map((prefecture, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.modalButton}
-                  onPress={() => selectPrefecture(prefecture)}
-                >
-                  <Text style={styles.modalButtonText}>
-                    {prefecture.prefecture}
-                  </Text>
-                </TouchableOpacity>
-              ))
-            )}
+            <Text style={styles.modalTitle}>{t('home.selectPrefectureTitle')}</Text>
+            <ScrollView style={styles.modalScrollView}>
+              {prefectures.length === 0 ? (
+                <Text style={styles.noDataText}>
+                  {t('home.noPrefectureData')}
+                </Text>
+              ) : (
+                prefectures.map((prefecture, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.modalButton}
+                    onPress={() => selectPrefecture(prefecture)}
+                  >
+                    <Text style={styles.modalButtonText}>
+                      {prefecture.prefecture}
+                    </Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
             {selectedPrefectureId && (
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalCancelButton]}
                 onPress={() => setPrefectureModalVisible(false)}
               >
-                <Text style={styles.modalCancelText}>キャンセル</Text>
+                <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -350,27 +383,61 @@ export default function HomeScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>エリアを選択してください</Text>
-            {areas.length === 0 ? (
-              <Text style={styles.noDataText}>
-                エリアデータがありません。管理画面から登録してください。
-              </Text>
-            ) : (
-              areas.map((area, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.modalButton}
-                  onPress={() => selectArea(area)}
-                >
-                  <Text style={styles.modalButtonText}>{area.name}</Text>
-                </TouchableOpacity>
-              ))
-            )}
+            <Text style={styles.modalTitle}>{t('home.selectAreaTitle')}</Text>
+            <ScrollView style={styles.modalScrollView}>
+              {areas.length === 0 ? (
+                <Text style={styles.noDataText}>
+                  {t('home.noAreaData')}
+                </Text>
+              ) : (
+                areas.map((area, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.modalButton}
+                    onPress={() => selectArea(area)}
+                  >
+                    <Text style={styles.modalButtonText}>{area.name}</Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
             <TouchableOpacity
               style={[styles.modalButton, styles.modalCancelButton]}
               onPress={() => setAreaModalVisible(false)}
             >
-              <Text style={styles.modalCancelText}>キャンセル</Text>
+              <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 言語選択モーダル */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={languageModalVisible}
+        onRequestClose={() => setLanguageModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t('settings.selectLanguage')}</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => changeLanguage('ja')}
+            >
+              <Text style={styles.modalButtonText}>{t('settings.japanese')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => changeLanguage('en')}
+            >
+              <Text style={styles.modalButtonText}>{t('settings.english')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalCancelButton]}
+              onPress={() => setLanguageModalVisible(false)}
+            >
+              <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -405,11 +472,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E1E8ED',
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#2C3E50',
-    marginBottom: 10,
+  },
+  languageButton: {
+    backgroundColor: '#95A5A6',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  languageButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   municipalityButton: {
     backgroundColor: '#5F9EA0',
@@ -496,6 +579,10 @@ const styles = StyleSheet.create({
     padding: 25,
     width: '80%',
     maxWidth: 400,
+    maxHeight: '80%',
+  },
+  modalScrollView: {
+    maxHeight: 400,
   },
   modalTitle: {
     fontSize: 20,

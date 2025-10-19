@@ -1,0 +1,57 @@
+以下のごみ収集カレンダーPDFを解析し、指定されたJSON形式で出力してください。
+
+【出力JSON形式】
+{
+  "areas": [
+    {
+      "name": "エリア名（日本語）",
+      "name_en": "Area Name (English - ローマ字表記)",
+      "monthlySchedules": [
+        {
+          "month": "2025-04",
+          "schedule": {
+            "burnable": [1, 8, 15, 22, 29],
+            "recyclable": [5, 12, 19, 26]
+          }
+        }
+      ]
+    }
+  ],
+  "garbageItems": [
+    {
+      "name_ja": "ペットボトル",
+      "name_en": "PET Bottles",
+      "category": "pet_bottles",
+      "description_ja": "キャップとラベルを外して、中をすすいでから出してください",
+      "description_en": "Remove cap and label, rinse inside before disposal",
+      "examples_ja": ["飲料用ペットボトル", "調味料のペットボトル"],
+      "examples_en": ["Beverage bottles", "Seasoning bottles"]
+    }
+  ]
+}
+
+【カテゴリーキー一覧】
+burnable = 燃やすごみ (Burnable Waste)
+nonBurnable = 燃やさないごみ (Non-Burnable Waste)
+recyclable = 資源ごみ (Recyclables)
+bottles = びん (Bottles)
+cans = かん (Cans)
+plastics = 容器包装プラスチック (Plastic Containers)
+pet_bottles = ペットボトル (PET Bottles)
+paper_and_cloth = 古布・紙類 (Paper & Cloth)
+hazardous_and_dangerous = 危険・有害ごみ (Hazardous Waste)
+cooking_oil = 家庭廃食用油 (Cooking Oil)
+bottles_and_cans = びん・缶・小型電化製品 (Bottles, Cans & Small Appliances)
+resources = 資源物 (Resources)
+metal_pottery_glass = 金属・陶器・ガラス (Metal, Pottery & Glass)
+
+【重要ルール】
+1. エリア名の英語は区名や地区名をローマ字表記（例: 渋谷区 → Shibuya）
+2. 収集日は配列で数字のみ（例: [1, 8, 15, 22, 29]）
+3. 月は "2025-04" 形式
+4. カテゴリーは上記のキーを必ず使用
+5. 全てのテキストを日本語と英語の両方で記載
+6. 有効なJSON形式で出力
+
+【PDF内容】
+

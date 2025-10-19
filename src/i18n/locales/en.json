@@ -1,0 +1,74 @@
+{
+  "app": {
+    "title": "Garbage Calendar 🗑️"
+  },
+  "tabs": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "search": "Search"
+  },
+  "home": {
+    "selectPrefecture": "Select Prefecture",
+    "selectArea": "Select Area",
+    "todayCollection": "Today's Collection",
+    "noCollection": "No collection today",
+    "nextCollection": "Next Collection Schedule",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "daysLater": "In {{days}} days ({{dayName}})",
+    "selectPrefectureTitle": "Please select a prefecture",
+    "selectAreaTitle": "Please select an area",
+    "noPrefectureData": "No prefecture data available. Please register via the admin panel.",
+    "noAreaData": "No area data available. Please register via the admin panel.",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "dataLoadError": "Failed to load data"
+  },
+  "calendar": {
+    "selectAreaPrompt": "Please select an area from the home screen",
+    "collectionSchedule": "Collection schedule for {{date}}",
+    "noSchedule": "No collection",
+    "legend": "Legend",
+    "loading": "Loading..."
+  },
+  "search": {
+    "placeholder": "Enter garbage name (e.g., PET bottles)",
+    "noResults": "No matching garbage found",
+    "searchPrompt": "Search for garbage name",
+    "howToDispose": "How to Dispose",
+    "examples": "Examples",
+    "close": "Close",
+    "loading": "Loading..."
+  },
+  "categories": {
+    "burnable": "Burnable Waste",
+    "nonBurnable": "Non-Burnable Waste",
+    "recyclable": "Recyclables",
+    "bottles": "Bottles",
+    "cans": "Cans",
+    "plastics": "Plastic Containers",
+    "pet_bottles": "PET Bottles",
+    "paper_and_cloth": "Paper & Cloth",
+    "hazardous_and_dangerous": "Hazardous Waste",
+    "cooking_oil": "Cooking Oil",
+    "bottles_and_cans": "Bottles, Cans & Small Appliances",
+    "resources": "Resources",
+    "metal_pottery_glass": "Metal, Pottery & Glass"
+  },
+  "weekdays": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  },
+  "settings": {
+    "language": "Language",
+    "selectLanguage": "Please select a language",
+    "japanese": "日本語",
+    "english": "English"
+  }
+}
+

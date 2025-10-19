@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next';
 import HomeScreen from '../screens/HomeScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import SearchScreen from '../screens/SearchScreen';
@@ -8,6 +9,8 @@ import SearchScreen from '../screens/SearchScreen';
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -30,7 +33,7 @@ export default function TabNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'ホーム',
+          title: t('tabs.home'),
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>🏠</Text>
           ),
@@ -40,7 +43,7 @@ export default function TabNavigator() {
         name="Calendar"
         component={CalendarScreen}
         options={{
-          title: 'カレンダー',
+          title: t('tabs.calendar'),
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>📅</Text>
           ),
@@ -50,7 +53,7 @@ export default function TabNavigator() {
         name="Search"
         component={SearchScreen}
         options={{
-          title: '分別検索',
+          title: t('tabs.search'),
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>🔍</Text>
           ),
