@@ -2,6 +2,37 @@ import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firesto
 import { db } from '../config/firebase';
 
 /**
+ * スケジュールデータを正規化
+ * "2025-04" 形式と "1" 形式の両方に対応
+ * @param {Object} schedule - 元のスケジュールデータ
+ * @returns {Object} 正規化されたスケジュールデータ（月番号のみをキーとする）
+ */
+const normalizeSchedule = (schedule) => {
+  if (!schedule || typeof schedule !== 'object') {
+    return {};
+  }
+
+  const normalized = {};
+  
+  Object.keys(schedule).forEach(key => {
+    let month;
+    
+    // "2025-04" 形式の場合、月部分を抽出
+    if (key.includes('-')) {
+      const parts = key.split('-');
+      month = String(parseInt(parts[1], 10)); // "04" -> "4"
+    } else {
+      // すでに月番号形式の場合
+      month = String(parseInt(key, 10)); // "01" -> "1", "1" -> "1"
+    }
+    
+    normalized[month] = schedule[key];
+  });
+  
+  return normalized;
+};
+
+/**
  * 市町村のごみ収集スケジュールを取得
  * @param {string} municipalityId - 市町村ID
  * @returns {Promise<Object>} 地域別の収集スケジュール
@@ -24,7 +55,8 @@ export const fetchGarbageSchedule = async (municipalityId) => {
     const areas = {};
     areasSnapshot.docs.forEach(doc => {
       const data = doc.data();
-      areas[data.name] = data.schedule;
+      // スケジュールデータを正規化して保存
+      areas[data.name] = normalizeSchedule(data.schedule);
     });
 
     return {

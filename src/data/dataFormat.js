@@ -151,4 +151,9 @@ export const categoryConfig = {
     color: '#FFD93D',
     icon: '🛢️',
   },
+  bottles_and_cans: {
+    name: 'びん・缶・小型電化製品',
+    color: '#7FCDCD',
+    icon: '♻️',
+  },
 };

@@ -79,7 +79,7 @@ gomicale/
     ├── config/
     │   └── firebase.js              # Firebase設定
     ├── data/
-    │   ├── sampleData.js            # サンプルデータ（カテゴリー設定）
+    │   ├── dataFormat.js            # ゴミごとのフォーマットデータ
     │   └── garbageData.js           # Firestoreからのデータ取得
     ├── navigation/
     │   └── TabNavigator.js          # タブナビゲーション

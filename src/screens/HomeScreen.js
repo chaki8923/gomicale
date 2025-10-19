@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { categoryConfig } from '../data/sampleData';
+import { categoryConfig } from '../data/dataFormat';
 import { fetchMunicipalities, fetchGarbageSchedule } from '../data/garbageData';
 
 export default function HomeScreen() {

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { categoryConfig } from '../data/sampleData';
+import { categoryConfig } from '../data/dataFormat';
 import { fetchGarbageSchedule } from '../data/garbageData';
 
 export default function CalendarScreen() {
@@ -79,8 +79,8 @@ export default function CalendarScreen() {
 
       // 各日付をチェック
       for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month - 1, day);
-        const dateString = date.toISOString().split('T')[0];
+        // タイムゾーンの影響を受けないように、直接日付文字列を作成
+        const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
         const garbageTypes = [];
         
