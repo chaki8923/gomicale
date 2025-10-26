@@ -168,6 +168,19 @@ export default function CalendarScreen() {
                 textMonthFontSize: 18,
               }}
               markingType={'multi-dot'}
+              // 月の切り替えを有効化
+              enableSwipeMonths={true}
+              // 現在の月を初期表示
+              current={new Date().toISOString().split('T')[0]}
+              // 過去と未来の月を表示可能にする
+              minDate={new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).toISOString().split('T')[0]}
+              maxDate={new Date(new Date().getFullYear(), new Date().getMonth() + 12, 0).toISOString().split('T')[0]}
+              // 余分な日を非表示
+              hideExtraDays={true}
+              // 月が変更されたときの処理
+              onMonthChange={(month) => {
+                console.log('月が変更されました:', month);
+              }}
             />
           </View>
 
