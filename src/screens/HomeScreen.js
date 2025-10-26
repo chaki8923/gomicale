@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  TextInput,
   Modal,
   ActivityIndicator,
   Linking,
@@ -16,6 +18,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchMunicipalities, fetchAreas, fetchAreaSchedule } from '../data/garbageData';
 import { saveLanguage } from '../i18n/i18n';
+
+// 人口順の都道府県リスト（上位から）
+const PREFECTURE_ORDER = [
+  '東京都', '神奈川県', '大阪府', '愛知県', '埼玉県', '千葉県', '兵庫県', '北海道',
+  '福岡県', '静岡県', '茨城県', '広島県', '京都府', '宮城県', '新潟県', '長野県',
+  '岐阜県', '群馬県', '栃木県', '岡山県', '三重県', '熊本県', '鹿児島県', '沖縄県',
+  '滋賀県', '山口県', '愛媛県', '奈良県', '長崎県', '青森県', '岩手県', '大分県',
+  '石川県', '山形県', '宮崎県', '富山県', '秋田県', '和歌山県', '香川県', '山梨県',
+  '佐賀県', '福井県', '徳島県', '高知県', '島根県', '鳥取県'
+];
 
 export default function HomeScreen() {
   const { t, i18n } = useTranslation();
@@ -31,6 +43,8 @@ export default function HomeScreen() {
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [prefectureSearchQuery, setPrefectureSearchQuery] = useState('');
+  const [areaSearchQuery, setAreaSearchQuery] = useState('');
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -45,13 +59,32 @@ export default function HomeScreen() {
     }
   }, [selectedAreaId, areaSchedule]);
 
+  const sortPrefectures = (prefecturesList) => {
+    return prefecturesList.sort((a, b) => {
+      const indexA = PREFECTURE_ORDER.indexOf(a.prefecture);
+      const indexB = PREFECTURE_ORDER.indexOf(b.prefecture);
+      
+      // 両方がリストにある場合、リスト順
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      // Aのみリストにある場合、Aを先に
+      if (indexA !== -1) return -1;
+      // Bのみリストにある場合、Bを先に
+      if (indexB !== -1) return 1;
+      // 両方リストにない場合、五十音順
+      return a.prefecture.localeCompare(b.prefecture, 'ja');
+    });
+  };
+
   const loadData = async () => {
     try {
       setLoading(true);
       
-      // 都道府県一覧を取得
+      // 都道府県一覧を取得してソート
       const prefecturesList = await fetchMunicipalities();
-      setPrefectures(prefecturesList);
+      const sortedPrefectures = sortPrefectures(prefecturesList);
+      setPrefectures(sortedPrefectures);
 
       // 保存されている都道府県IDとエリアIDを読み込み
       const savedPrefectureId = await AsyncStorage.getItem('selectedPrefectureId');
@@ -363,40 +396,68 @@ export default function HomeScreen() {
         animationType="slide"
         transparent={true}
         visible={prefectureModalVisible}
-        onRequestClose={() => setPrefectureModalVisible(false)}
+        onRequestClose={() => {
+          setPrefectureModalVisible(false);
+          setPrefectureSearchQuery('');
+        }}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{t('home.selectPrefectureTitle')}</Text>
-            <ScrollView style={styles.modalScrollView}>
-              {prefectures.length === 0 ? (
-                <Text style={styles.noDataText}>
-                  {t('home.noPrefectureData')}
-                </Text>
-              ) : (
-                prefectures.map((prefecture, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.modalButton}
-                    onPress={() => selectPrefecture(prefecture)}
-                  >
-                    <Text style={styles.modalButtonText}>
-                      {prefecture.prefecture}
+        <TouchableWithoutFeedback onPress={() => {
+          setPrefectureModalVisible(false);
+          setPrefectureSearchQuery('');
+        }}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>{t('home.selectPrefectureTitle')}</Text>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder={t('home.searchPrefecture')}
+                  value={prefectureSearchQuery}
+                  onChangeText={setPrefectureSearchQuery}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <ScrollView style={styles.modalScrollView}>
+                  {prefectures.length === 0 ? (
+                    <Text style={styles.noDataText}>
+                      {t('home.noPrefectureData')}
                     </Text>
+                  ) : (
+                    prefectures
+                      .filter(prefecture => 
+                        prefecture.prefecture.toLowerCase().includes(prefectureSearchQuery.toLowerCase())
+                      )
+                      .map((prefecture, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={styles.modalButton}
+                          onPress={() => {
+                            selectPrefecture(prefecture);
+                            setPrefectureSearchQuery('');
+                          }}
+                        >
+                          <Text style={styles.modalButtonText}>
+                            {prefecture.prefecture}
+                          </Text>
+                        </TouchableOpacity>
+                      ))
+                  )}
+                </ScrollView>
+                {selectedPrefectureId && (
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.modalCancelButton]}
+                    onPress={() => {
+                      setPrefectureModalVisible(false);
+                      setPrefectureSearchQuery('');
+                    }}
+                  >
+                    <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
                   </TouchableOpacity>
-                ))
-              )}
-            </ScrollView>
-            {selectedPrefectureId && (
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalCancelButton]}
-                onPress={() => setPrefectureModalVisible(false)}
-              >
-                <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
-              </TouchableOpacity>
-            )}
+                )}
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
       {/* エリア選択モーダル */}
@@ -404,45 +465,73 @@ export default function HomeScreen() {
         animationType="slide"
         transparent={true}
         visible={areaModalVisible}
-        onRequestClose={() => setAreaModalVisible(false)}
+        onRequestClose={() => {
+          setAreaModalVisible(false);
+          setAreaSearchQuery('');
+        }}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{t('home.selectAreaTitle')}</Text>
-            <ScrollView style={styles.modalScrollView}>
-              {areas.length === 0 ? (
-                <Text style={styles.noDataText}>
-                  {t('home.noAreaData')}
-                </Text>
-              ) : (
-                areas.map((area, index) => (
+        <TouchableWithoutFeedback onPress={() => {
+          setAreaModalVisible(false);
+          setAreaSearchQuery('');
+        }}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>{t('home.selectAreaTitle')}</Text>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder={t('home.searchArea')}
+                  value={areaSearchQuery}
+                  onChangeText={setAreaSearchQuery}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <ScrollView style={styles.modalScrollView}>
+                  {areas.length === 0 ? (
+                    <Text style={styles.noDataText}>
+                      {t('home.noAreaData')}
+                    </Text>
+                  ) : (
+                    areas
+                      .filter(area => 
+                        area.name.toLowerCase().includes(areaSearchQuery.toLowerCase())
+                      )
+                      .map((area, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={styles.modalButton}
+                          onPress={() => {
+                            selectArea(area);
+                            setAreaSearchQuery('');
+                          }}
+                        >
+                          <Text style={styles.modalButtonText}>{area.name}</Text>
+                        </TouchableOpacity>
+                      ))
+                  )}
+                </ScrollView>
+                <View style={styles.requestAreaContainer}>
+                  <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
                   <TouchableOpacity
-                    key={index}
-                    style={styles.modalButton}
-                    onPress={() => selectArea(area)}
+                    style={styles.requestAreaButton}
+                    onPress={openRequestForm}
                   >
-                    <Text style={styles.modalButtonText}>{area.name}</Text>
+                    <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
                   </TouchableOpacity>
-                ))
-              )}
-            </ScrollView>
-            <View style={styles.requestAreaContainer}>
-              <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
-              <TouchableOpacity
-                style={styles.requestAreaButton}
-                onPress={openRequestForm}
-              >
-                <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalCancelButton]}
-              onPress={() => setAreaModalVisible(false)}
-            >
-              <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
-            </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalCancelButton]}
+                  onPress={() => {
+                    setAreaModalVisible(false);
+                    setAreaSearchQuery('');
+                  }}
+                >
+                  <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
       {/* 言語選択モーダル */}
@@ -622,8 +711,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#2C3E50',
-    marginBottom: 20,
+    marginBottom: 15,
     textAlign: 'center',
+  },
+  searchInput: {
+    backgroundColor: '#F7F9FC',
+    padding: 12,
+    borderRadius: 8,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
+    marginBottom: 15,
   },
   modalButton: {
     backgroundColor: '#4ECDC4',

@@ -24,7 +24,9 @@
     "loading": "読み込み中...",
     "dataLoadError": "データの読み込みに失敗しました",
     "requestAreaAddition": "お住まいの地域がない場合",
-    "requestAreaButton": "📝 地域追加をリクエスト"
+    "requestAreaButton": "📝 地域追加をリクエスト",
+    "searchPrefecture": "都道府県を検索...",
+    "searchArea": "エリアを検索..."
   },
   "calendar": {
     "selectAreaPrompt": "ホーム画面でエリアを選択してください",

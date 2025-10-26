@@ -24,7 +24,9 @@
     "loading": "Loading...",
     "dataLoadError": "Failed to load data",
     "requestAreaAddition": "Can't find your area?",
-    "requestAreaButton": "📝 Request Area Addition"
+    "requestAreaButton": "📝 Request Area Addition",
+    "searchPrefecture": "Search prefecture...",
+    "searchArea": "Search area..."
   },
   "calendar": {
     "selectAreaPrompt": "Please select an area from the home screen",
