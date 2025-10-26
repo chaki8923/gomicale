@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
+  Linking,
+  Alert,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -149,6 +151,29 @@ export default function HomeScreen() {
       loadData();
     } catch (error) {
       console.error('言語変更エラー:', error);
+    }
+  };
+
+  const openRequestForm = async () => {
+    const url = 'https://forms.gle/Fhe7bpjwjBkoiJYy5';
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(
+          t('home.requestAreaAddition'),
+          'フォームを開けませんでした',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('リンクを開くエラー:', error);
+      Alert.alert(
+        t('home.requestAreaAddition'),
+        'フォームを開けませんでした',
+        [{ text: 'OK' }]
+      );
     }
   };
 
@@ -401,6 +426,15 @@ export default function HomeScreen() {
                 ))
               )}
             </ScrollView>
+            <View style={styles.requestAreaContainer}>
+              <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
+              <TouchableOpacity
+                style={styles.requestAreaButton}
+                onPress={openRequestForm}
+              >
+                <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
               style={[styles.modalButton, styles.modalCancelButton]}
               onPress={() => setAreaModalVisible(false)}
@@ -612,5 +646,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  requestAreaContainer: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: '#FFF9E6',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFD93D',
+  },
+  requestAreaText: {
+    fontSize: 13,
+    color: '#856404',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  requestAreaButton: {
+    backgroundColor: '#FFD93D',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  requestAreaButtonText: {
+    color: '#2C3E50',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

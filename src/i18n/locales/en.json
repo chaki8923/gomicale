@@ -22,7 +22,9 @@
     "noAreaData": "No area data available. Please register via the admin panel.",
     "cancel": "Cancel",
     "loading": "Loading...",
-    "dataLoadError": "Failed to load data"
+    "dataLoadError": "Failed to load data",
+    "requestAreaAddition": "Can't find your area?",
+    "requestAreaButton": "📝 Request Area Addition"
   },
   "calendar": {
     "selectAreaPrompt": "Please select an area from the home screen",
