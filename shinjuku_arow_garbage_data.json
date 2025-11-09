@@ -1,0 +1,571 @@
+{
+  "municipalities": [
+    {
+      "id": "tokyo",
+      "prefecture": "東京都",
+      "prefecture_en": "Tokyo",
+      "cities": [
+        {
+          "id": "shinjuku_ku",
+          "name": "新宿区",
+          "name_en": "Shinjuku-ku",
+          "areas": [
+            {
+              "id": "shinjuku_aijucho",
+              "name": "愛住町",
+              "name_en": "Aijucho",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [12, 26]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [10, 24]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [14, 28]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [12, 26]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [9, 23]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [13, 27]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [11, 25]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [8, 22]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [13, 27]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [11, 25]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [8, 22]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [8, 22]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_akagishitamachi",
+              "name": "赤城下町",
+              "name_en": "Akagishitamachi",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [2, 16]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [7, 21]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [3, 10, 17, 24], "metal_pottery_glass": [4, 18]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [2, 16]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [6, 20]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [3, 17]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [1, 15]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [4, 11, 18, 25], "metal_pottery_glass": [5, 19]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [3, 17]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [7, 21]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [3, 10, 17, 24], "metal_pottery_glass": [4, 18]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [4, 18]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_akagimotomachi",
+              "name": "赤城元町",
+              "name_en": "Akagimotomachi",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [2, 16]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [7, 21]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [3, 10, 17, 24], "metal_pottery_glass": [4, 18]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [2, 16]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [6, 20]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [3, 17]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [1, 15]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [4, 11, 18, 25], "metal_pottery_glass": [5, 19]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [3, 17]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [7, 21]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [3, 10, 17, 24], "metal_pottery_glass": [4, 18]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [4, 18]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_agemachicho",
+              "name": "揚場町",
+              "name_en": "Agemachicho",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [13, 27]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [10, 24]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [10, 24]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [12, 26]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_arakicho_21_23",
+              "name": "荒木町（21から23番地）",
+              "name_en": "Arakicho (21-23)",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [12, 26]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [10, 24]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [14, 28]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [12, 26]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [9, 23]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [13, 27]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [11, 25]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [8, 22]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [13, 27]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [11, 25]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [8, 22]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [8, 22]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_arakicho_other",
+              "name": "荒木町（上記を除く）",
+              "name_en": "Arakicho (Other)",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayakagacho_1_2",
+              "name": "市谷加賀町1・2丁目",
+              "name_en": "Ichigayakagacho 1-2 Chome",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [14, 28]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayakoracho",
+              "name": "市谷甲良町",
+              "name_en": "Ichigayakoracho",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [14, 28]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayasadoharacho_1_3",
+              "name": "市谷砂土原町1から3丁目",
+              "name_en": "Ichigayasadoharacho 1-3 Chome",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [14, 28]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayasanocho",
+              "name": "市谷左内町",
+              "name_en": "Ichigayasanocho",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayatakajomachi",
+              "name": "市谷鷹匠町",
+              "name_en": "Ichigayatakajomachi",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [14, 28]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayatamachi_1",
+              "name": "市谷田町1丁目",
+              "name_en": "Ichigayatamachi 1 Chome",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayatamachi_2_3",
+              "name": "市谷田町2・3丁目",
+              "name_en": "Ichigayatamachi 2-3 Chome",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [14, 28]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayadaimachi_odd",
+              "name": "市谷台町（1、3、5、7、9、11、13番）",
+              "name_en": "Ichigayadaimachi (Odd Numbers)",
+              "schedule": {
+                "4": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "5": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [13, 27]},
+                "6": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [10, 24]},
+                "7": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "8": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "9": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "10": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "11": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "12": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "1": {"burnable": [7, 10, 14, 17, 21, 24, 28, 31], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "2": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "3": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayadaimachi_even",
+              "name": "市谷台町（上記を除く）",
+              "name_en": "Ichigayadaimachi (Other)",
+              "schedule": {
+                "4": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "5": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "6": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "7": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "8": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "9": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "10": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "11": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "12": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "1": {"burnable": [7, 10, 14, 17, 21, 24, 28, 31], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "2": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "3": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayachonobujicho",
+              "name": "市谷長延寺町",
+              "name_en": "Ichigayachonobujicho",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayanakanocho",
+              "name": "市谷仲之町",
+              "name_en": "Ichigayanakanocho",
+              "schedule": {
+                "4": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "5": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [13, 27]},
+                "6": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [10, 24]},
+                "7": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "8": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "9": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "10": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "11": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "12": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "1": {"burnable": [7, 10, 14, 17, 21, 24, 28, 31], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "2": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "3": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayahachimancho",
+              "name": "市谷八幡町",
+              "name_en": "Ichigayahachimancho",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayafunagawaramachi_1_3_8_12_14",
+              "name": "市谷船河原町（1、3から8、12、14番地）",
+              "name_en": "Ichigayafunagawaramachi (1, 3-8, 12, 14)",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [9, 23]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [13, 27]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [11, 25]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [8, 22]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [12, 26]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [10, 24]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [14, 28]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [14, 28]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayafunagawaramachi_other",
+              "name": "市谷船河原町（上記を除く）",
+              "name_en": "Ichigayafunagawaramachi (Other)",
+              "schedule": {
+                "4": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28], "resources": [5, 12, 19, 26], "metal_pottery_glass": [2, 16]},
+                "5": {"burnable": [1, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "6": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [4, 18]},
+                "7": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [2, 16]},
+                "8": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "9": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "10": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "11": {"burnable": [6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [5, 19]},
+                "12": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "1": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [4, 11, 18, 25], "metal_pottery_glass": [7, 21]},
+                "2": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26], "resources": [1, 8, 15, 22], "metal_pottery_glass": [4, 18]},
+                "3": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [4, 18]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayahonmuracho",
+              "name": "市谷本村町",
+              "name_en": "Ichigayahonmuracho",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayayanagimachi",
+              "name": "市谷柳町",
+              "name_en": "Ichigayayanagimachi",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayayakuojicho",
+              "name": "市谷薬王寺町",
+              "name_en": "Ichigayayakuojicho",
+              "schedule": {
+                "4": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "5": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [13, 27]},
+                "6": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [10, 24]},
+                "7": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "8": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "9": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "10": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "11": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "12": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "1": {"burnable": [7, 10, 14, 17, 21, 24, 28, 31], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [14, 28]},
+                "2": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "3": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_ichigayayamabushicho",
+              "name": "市谷山伏町",
+              "name_en": "Ichigayayamabushicho",
+              "schedule": {
+                "4": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [7, 21]},
+                "5": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [12, 26]},
+                "6": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [9, 23]},
+                "7": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "8": {"burnable": [1, 5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [11, 25]},
+                "9": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [8, 22]},
+                "10": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "11": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "12": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "1": {"burnable": [6, 9, 13, 16, 20, 23, 27, 30], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "2": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "3": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]}
+              },
+              "jurisdiction": "東"
+            },
+            {
+              "id": "shinjuku_okubo_1_2",
+              "name": "大久保1・2丁目",
+              "name_en": "Okubo 1-2 Chome",
+              "schedule": {
+                "4": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [3, 17]},
+                "5": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [1, 15]},
+                "6": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [5, 19]},
+                "7": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [7, 14, 21, 28], "metal_pottery_glass": [3, 17]},
+                "8": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [7, 21]},
+                "9": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [4, 18]},
+                "10": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "11": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [3, 10, 17, 24], "metal_pottery_glass": [6, 20]},
+                "12": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [4, 18]},
+                "1": {"burnable": [7, 10, 14, 17, 21, 24, 28, 31], "resources": [6, 13, 20, 27], "metal_pottery_glass": [2, 16]},
+                "2": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [3, 10, 17, 24], "metal_pottery_glass": [6, 20]},
+                "3": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [6, 20]}
+              },
+              "jurisdiction": "新"
+            },
+            {
+              "id": "shinjuku_okubo_3",
+              "name": "大久保3丁目",
+              "name_en": "Okubo 3 Chome",
+              "schedule": {
+                "4": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "5": {"burnable": [3, 7, 10, 14, 17, 21, 24, 28, 31], "resources": [2, 9, 16, 23, 30], "metal_pottery_glass": [6, 20]},
+                "6": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [6, 13, 20, 27], "metal_pottery_glass": [3, 17]},
+                "7": {"burnable": [2, 5, 9, 12, 16, 19, 23, 26, 30], "resources": [4, 11, 18, 25], "metal_pottery_glass": [1, 15]},
+                "8": {"burnable": [2, 6, 9, 13, 16, 20, 23, 27, 30], "resources": [1, 8, 15, 22, 29], "metal_pottery_glass": [5, 19]},
+                "9": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27], "resources": [5, 12, 19, 26], "metal_pottery_glass": [2, 16]},
+                "10": {"burnable": [1, 4, 8, 11, 15, 18, 22, 25, 29], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "11": {"burnable": [5, 8, 12, 15, 19, 22, 26, 29], "resources": [7, 14, 21, 28], "metal_pottery_glass": [4, 18]},
+                "12": {"burnable": [3, 6, 10, 13, 17, 20, 24, 27, 31], "resources": [5, 12, 19, 26], "metal_pottery_glass": [2, 16]},
+                "1": {"burnable": [7, 10, 14, 17, 21, 24, 28, 31], "resources": [3, 10, 17, 24, 31], "metal_pottery_glass": [7, 21]},
+                "2": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [4, 18]},
+                "3": {"burnable": [4, 7, 11, 14, 18, 21, 25, 28], "resources": [7, 14, 21, 28], "metal_pottery_glass": [4, 18]}
+              },
+              "jurisdiction": "新"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "garbageItems": [
+    {
+      "name": "資源",
+      "name_en": "Resources",
+      "category": "resources",
+      "description": "古紙、資源プラスチック、びん、缶、ペットボトル、スプレー缶・カセットボンベ・乾電池",
+      "description_en": "Waste paper, recyclable plastics, bottles, cans, PET bottles, spray cans, cassette cylinders, dry batteries"
+    },
+    {
+      "name": "燃やすごみ",
+      "name_en": "Burnable Garbage",
+      "category": "burnable",
+      "description": "台所ごみ、紙くず、木くず、プラスチック製品など",
+      "description_en": "Kitchen waste, paper scraps, wood scraps, plastic products, etc."
+    },
+    {
+      "name": "金属・陶器・ガラスごみ",
+      "name_en": "Metal, Pottery, and Glass Garbage",
+      "category": "metal_pottery_glass",
+      "description": "金属製品、陶器、ガラス製品など（月の特定曜日に収集）",
+      "description_en": "Metal products, pottery, glass products, etc. (collected on specific weeks)"
+    }
+  ],
+  "notes": [
+    "資源とは、古紙、資源プラスチック、びん、缶、ペットボトル、スプレー缶・カセットボンベ・乾電池です。",
+    "祝日も曜日どおりに回収・収集します。（日曜日・年末年始は除く）",
+    "金属・陶器・ガラスごみの収集日は、その月の「1番目と3番目にあたる各曜日」または「2番目と4番目にあたる各曜日」です。月の「5番目の曜日」に収集はありません。",
+    "管轄表示：新=新宿清掃事務所（電話：03-3950-2923）、東=新宿東清掃センター（電話：03-3353-5311）",
+    "令和7年度（2025年4月〜2026年3月）のスケジュールです。"
+  ],
+  "sources": [
+    "https://www.city.shinjuku.lg.jp/seikatsu/file09_01_00001.html"
+  ]
+}

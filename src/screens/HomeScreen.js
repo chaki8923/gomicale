@@ -16,7 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { categoryConfig } from '../data/dataFormat';
-import { fetchMunicipalities, fetchAreas, fetchAreaSchedule } from '../data/garbageData';
+import { fetchMunicipalities, fetchCities, fetchAreas, fetchAreaSchedule } from '../data/garbageData';
 import { saveLanguage } from '../i18n/i18n';
 
 // 人口順の都道府県リスト（上位から）
@@ -33,17 +33,22 @@ export default function HomeScreen() {
   const { t, i18n } = useTranslation();
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [selectedAreaName, setSelectedAreaName] = useState(null);
+  const [selectedCityId, setSelectedCityId] = useState(null);
+  const [selectedCityName, setSelectedCityName] = useState(null);
   const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
   const [selectedPrefecture, setSelectedPrefecture] = useState(null);
   const [prefectures, setPrefectures] = useState([]);
+  const [cities, setCities] = useState([]);
   const [areas, setAreas] = useState([]);
   const [areaSchedule, setAreaSchedule] = useState(null);
   const [areaModalVisible, setAreaModalVisible] = useState(false);
+  const [cityModalVisible, setCityModalVisible] = useState(false);
   const [prefectureModalVisible, setPrefectureModalVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [prefectureSearchQuery, setPrefectureSearchQuery] = useState('');
+  const [citySearchQuery, setCitySearchQuery] = useState('');
   const [areaSearchQuery, setAreaSearchQuery] = useState('');
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
@@ -86,8 +91,10 @@ export default function HomeScreen() {
       const sortedPrefectures = sortPrefectures(prefecturesList);
       setPrefectures(sortedPrefectures);
 
-      // 保存されている都道府県IDとエリアIDを読み込み
+      // 保存されている都道府県ID、市区町村ID、エリアIDを読み込み
       const savedPrefectureId = await AsyncStorage.getItem('selectedPrefectureId');
+      const savedCityId = await AsyncStorage.getItem('selectedCityId');
+      const savedCityName = await AsyncStorage.getItem('selectedCityName');
       const savedAreaId = await AsyncStorage.getItem('selectedAreaId');
       const savedAreaName = await AsyncStorage.getItem('selectedAreaName');
 
@@ -96,7 +103,7 @@ export default function HomeScreen() {
         if (prefecture) {
           setSelectedPrefectureId(savedPrefectureId);
           setSelectedPrefecture(prefecture.prefecture);
-          await loadPrefectureData(savedPrefectureId, savedAreaId, savedAreaName);
+          await loadPrefectureData(savedPrefectureId, savedCityId, savedCityName, savedAreaId, savedAreaName);
         } else {
           // 保存された都道府県が見つからない場合、選択を促す
           setPrefectureModalVisible(true);
@@ -113,17 +120,52 @@ export default function HomeScreen() {
     }
   };
 
-  const loadPrefectureData = async (prefectureId, savedAreaId = null, savedAreaName = null) => {
+  const loadPrefectureData = async (prefectureId, savedCityId = null, savedCityName = null, savedAreaId = null, savedAreaName = null) => {
     try {
-      // エリア一覧を取得
-      const areasList = await fetchAreas(prefectureId);
+      // 市区町村一覧を取得
+      const citiesList = await fetchCities(prefectureId);
+      setCities(citiesList);
+
+      if (savedCityId) {
+        const city = citiesList.find(c => c.id === savedCityId);
+        if (city) {
+          setSelectedCityId(savedCityId);
+          setSelectedCityName(city.name);
+          // cityオブジェクト全体を渡す（idsプロパティを含む）
+          await loadCityData(prefectureId, city, savedAreaId, savedAreaName);
+        } else {
+          setCityModalVisible(true);
+        }
+      } else if (citiesList.length > 0) {
+        setCityModalVisible(true);
+      }
+    } catch (error) {
+      console.error('都道府県データの読み込みエラー:', error);
+    }
+  };
+
+  const loadCityData = async (prefectureId, cityId, savedAreaId = null, savedAreaName = null) => {
+    try {
+      // cityIdまたはcityオブジェクトからIDを取得
+      // cityオブジェクトの場合、idsプロパティがあれば複数のIDを使用
+      let cityIds;
+      if (typeof cityId === 'object' && cityId.ids) {
+        cityIds = cityId.ids;
+      } else if (typeof cityId === 'string') {
+        cityIds = [cityId];
+      } else {
+        cityIds = [cityId];
+      }
+
+      // エリア一覧を取得（複数のcityIdから）
+      const areasList = await fetchAreas(prefectureId, cityIds);
       setAreas(areasList);
 
       if (savedAreaId) {
         const area = areasList.find(a => a.id === savedAreaId);
         if (area) {
           setSelectedAreaId(savedAreaId);
-          setSelectedAreaName(area.name); // エリアリストから最新の名前を取得
+          setSelectedAreaName(area.name);
           setAreaSchedule(area.schedule);
         } else {
           setAreaModalVisible(true);
@@ -132,7 +174,7 @@ export default function HomeScreen() {
         setAreaModalVisible(true);
       }
     } catch (error) {
-      console.error('都道府県データの読み込みエラー:', error);
+      console.error('市区町村データの読み込みエラー:', error);
     }
   };
 
@@ -142,17 +184,47 @@ export default function HomeScreen() {
       setSelectedPrefecture(prefecture.prefecture);
       await AsyncStorage.setItem('selectedPrefectureId', prefecture.id);
       
+      // 以前の市区町村とエリア選択をクリア
+      setSelectedCityId(null);
+      setSelectedCityName(null);
+      setSelectedAreaId(null);
+      setSelectedAreaName(null);
+      await AsyncStorage.removeItem('selectedCityId');
+      await AsyncStorage.removeItem('selectedCityName');
+      await AsyncStorage.removeItem('selectedAreaId');
+      await AsyncStorage.removeItem('selectedAreaName');
+      
+      await loadPrefectureData(prefecture.id);
+      setPrefectureModalVisible(false);
+      setCityModalVisible(true);
+    } catch (error) {
+      console.error('都道府県の選択エラー:', error);
+    }
+  };
+
+  const selectCity = async (city) => {
+    try {
+      setSelectedCityId(city.id);
+      setSelectedCityName(city.name);
+      await AsyncStorage.setItem('selectedCityId', city.id);
+      await AsyncStorage.setItem('selectedCityName', city.name);
+      // 複数のIDがある場合は保存
+      if (city.ids && city.ids.length > 1) {
+        await AsyncStorage.setItem('selectedCityIds', JSON.stringify(city.ids));
+      }
+      
       // 以前のエリア選択をクリア
       setSelectedAreaId(null);
       setSelectedAreaName(null);
       await AsyncStorage.removeItem('selectedAreaId');
       await AsyncStorage.removeItem('selectedAreaName');
       
-      await loadPrefectureData(prefecture.id);
-      setPrefectureModalVisible(false);
+      // cityオブジェクト全体を渡す（idsプロパティを含む）
+      await loadCityData(selectedPrefectureId, city);
+      setCityModalVisible(false);
       setAreaModalVisible(true);
     } catch (error) {
-      console.error('都道府県の選択エラー:', error);
+      console.error('市区町村の選択エラー:', error);
     }
   };
 
@@ -160,7 +232,12 @@ export default function HomeScreen() {
     try {
       await AsyncStorage.setItem('selectedAreaId', area.id);
       await AsyncStorage.setItem('selectedAreaName', area.name);
+      await AsyncStorage.setItem('selectedCityId', selectedCityId);
       await AsyncStorage.setItem('selectedPrefectureId', selectedPrefectureId);
+      // エリアが属するcityIdも保存（後でスケジュール取得に必要）
+      if (area.cityId) {
+        await AsyncStorage.setItem('selectedAreaCityId', area.cityId);
+      }
       
       setSelectedAreaId(area.id);
       setSelectedAreaName(area.name);
@@ -340,8 +417,16 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
+          style={styles.cityButton}
+          onPress={() => selectedPrefectureId ? setCityModalVisible(true) : changeLocation()}
+        >
+          <Text style={styles.cityButtonText}>
+            🏙️ {selectedCityName || t('home.selectCity')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.areaButton}
-          onPress={() => setAreaModalVisible(true)}
+          onPress={() => selectedCityId ? setAreaModalVisible(true) : (selectedPrefectureId ? setCityModalVisible(true) : changeLocation())}
         >
           <Text style={styles.areaButtonText}>
             🏘️ {selectedAreaName || t('home.selectArea')}
@@ -460,6 +545,73 @@ export default function HomeScreen() {
         </TouchableWithoutFeedback>
       </Modal>
 
+      {/* 市区町村選択モーダル */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={cityModalVisible}
+        onRequestClose={() => {
+          setCityModalVisible(false);
+          setCitySearchQuery('');
+        }}
+      >
+        <TouchableWithoutFeedback onPress={() => {
+          setCityModalVisible(false);
+          setCitySearchQuery('');
+        }}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>{t('home.selectCityTitle')}</Text>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder={t('home.searchCity')}
+                  value={citySearchQuery}
+                  onChangeText={setCitySearchQuery}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <ScrollView style={styles.modalScrollView}>
+                  {cities.length === 0 ? (
+                    <Text style={styles.noDataText}>
+                      {t('home.noCityData')}
+                    </Text>
+                  ) : (
+                    cities
+                      .filter(city => 
+                        city.name.toLowerCase().includes(citySearchQuery.toLowerCase())
+                      )
+                      .map((city, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={styles.modalButton}
+                          onPress={() => {
+                            selectCity(city);
+                            setCitySearchQuery('');
+                          }}
+                        >
+                          <Text style={styles.modalButtonText}>
+                            {city.name}
+                          </Text>
+                        </TouchableOpacity>
+                      ))
+                  )}
+                </ScrollView>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalCancelButton]}
+                  onPress={() => {
+                    setCityModalVisible(false);
+                    setCitySearchQuery('');
+                  }}
+                >
+                  <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {/* エリア選択モーダル */}
       <Modal
         animationType="slide"
@@ -512,6 +664,7 @@ export default function HomeScreen() {
                 </ScrollView>
                 <View style={styles.requestAreaContainer}>
                   <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
+                  <Text style={styles.requestAreaNote}>✨ {t('home.requestAreaAdditionNote')}</Text>
                   <TouchableOpacity
                     style={styles.requestAreaButton}
                     onPress={openRequestForm}
@@ -625,6 +778,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   municipalityButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  cityButton: {
+    backgroundColor: '#48B3A4',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cityButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
@@ -756,8 +921,16 @@ const styles = StyleSheet.create({
   requestAreaText: {
     fontSize: 13,
     color: '#856404',
-    marginBottom: 8,
+    marginBottom: 4,
     textAlign: 'center',
+    fontWeight: '600',
+  },
+  requestAreaNote: {
+    fontSize: 12,
+    color: '#28a745',
+    marginBottom: 10,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   requestAreaButton: {
     backgroundColor: '#FFD93D',

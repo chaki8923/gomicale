@@ -34,30 +34,93 @@ const normalizeSchedule = (schedule) => {
 };
 
 /**
- * 都道府県のエリア一覧を取得（多言語対応）
+ * 都道府県の市区町村一覧を取得（多言語対応）
  * @param {string} municipalityId - 都道府県ID
- * @returns {Promise<Array>} エリアの配列
+ * @returns {Promise<Array>} 市区町村の配列
  */
-export const fetchAreas = async (municipalityId) => {
+export const fetchCities = async (municipalityId) => {
   try {
-    const areasSnapshot = await getDocs(
-      collection(db, 'municipalities', municipalityId, 'areas')
+    const citiesSnapshot = await getDocs(
+      collection(db, 'municipalities', municipalityId, 'cities')
     );
     const currentLang = i18n.language || 'ja';
 
-    return areasSnapshot.docs.map(doc => {
+    const citiesMap = new Map();
+    
+    citiesSnapshot.docs.forEach(doc => {
       const data = doc.data();
       // 多言語対応: 現在の言語に応じたフィールドを使用、なければ日本語
       const name = currentLang === 'ja' 
         ? (data.name || data.name_ja)
         : (data[`name_${currentLang}`] || data.name_ja || data.name);
       
-      return {
-        id: doc.id,
-        name: name,
-        schedule: normalizeSchedule(data.schedule)
-      };
+      // 重複する名前がある場合、すべてのcityIdを配列で保持
+      if (!citiesMap.has(name)) {
+        citiesMap.set(name, {
+          ids: [doc.id], // 複数のIDを配列で保持
+          name: name,
+          type: data.type || 'city'
+        });
+      } else {
+        // 同じ名前のcityがある場合、IDを追加
+        const existingCity = citiesMap.get(name);
+        existingCity.ids.push(doc.id);
+      }
     });
+
+    // idsを単一のidに変換（後方互換性のため、最初のIDを使用）
+    return Array.from(citiesMap.values()).map(city => ({
+      id: city.ids[0], // 表示用には最初のIDを使用
+      ids: city.ids,    // すべてのIDを保持
+      name: city.name,
+      type: city.type
+    }));
+  } catch (error) {
+    console.error('Error fetching cities:', error);
+    throw error;
+  }
+};
+
+/**
+ * 市区町村のエリア一覧を取得（多言語対応）
+ * @param {string} municipalityId - 都道府県ID
+ * @param {string} cityId - 市区町村ID または cityオブジェクト（idsプロパティを持つ）
+ * @returns {Promise<Array>} エリアの配列
+ */
+export const fetchAreas = async (municipalityId, cityId) => {
+  try {
+    const currentLang = i18n.language || 'ja';
+    let allAreas = [];
+
+    // cityIdが配列の場合は、すべてのIDからエリアを取得
+    const cityIds = Array.isArray(cityId) ? cityId : [cityId];
+
+    // 各cityIdからエリアを取得してマージ
+    for (const id of cityIds) {
+      const areasSnapshot = await getDocs(
+        collection(db, 'municipalities', municipalityId, 'cities', id, 'areas')
+      );
+
+      const areas = areasSnapshot.docs.map(doc => {
+        const data = doc.data();
+        // 多言語対応: 現在の言語に応じたフィールドを使用、なければ日本語
+        const name = currentLang === 'ja' 
+          ? (data.name || data.name_ja)
+          : (data[`name_${currentLang}`] || data.name_ja || data.name);
+        
+        return {
+          id: doc.id,
+          cityId: id, // どのcityIdから取得したかを保持
+          name: name,
+          schedule: normalizeSchedule(data.schedule)
+        };
+      });
+
+      allAreas = allAreas.concat(areas);
+    }
+
+    // エリア名でソート（五十音順）
+    return allAreas.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
   } catch (error) {
     console.error('Error fetching areas:', error);
     throw error;
@@ -67,12 +130,13 @@ export const fetchAreas = async (municipalityId) => {
 /**
  * エリアIDから収集スケジュールを取得（多言語対応）
  * @param {string} municipalityId - 都道府県ID
+ * @param {string} cityId - 市区町村ID（エリアが所属する実際のcityId）
  * @param {string} areaId - エリアID
  * @returns {Promise<Object>} 収集スケジュール
  */
-export const fetchAreaSchedule = async (municipalityId, areaId) => {
+export const fetchAreaSchedule = async (municipalityId, cityId, areaId) => {
   try {
-    const areaDoc = await getDoc(doc(db, 'municipalities', municipalityId, 'areas', areaId));
+    const areaDoc = await getDoc(doc(db, 'municipalities', municipalityId, 'cities', cityId, 'areas', areaId));
     if (!areaDoc.exists()) {
       throw new Error('エリアが見つかりません');
     }
@@ -110,17 +174,25 @@ export const fetchGarbageSchedule = async (municipalityId) => {
 
     const prefecture = municipalityDoc.data().prefecture;
 
-    // 地域データを取得
-    const areasSnapshot = await getDocs(
-      collection(db, 'municipalities', municipalityId, 'areas')
+    // 市区町村データを取得
+    const citiesSnapshot = await getDocs(
+      collection(db, 'municipalities', municipalityId, 'cities')
     );
 
     const areas = {};
-    areasSnapshot.docs.forEach(doc => {
-      const data = doc.data();
-      // スケジュールデータを正規化して保存
-      areas[data.name] = normalizeSchedule(data.schedule);
-    });
+    
+    // 各市区町村の地域データを取得
+    for (const cityDoc of citiesSnapshot.docs) {
+      const areasSnapshot = await getDocs(
+        collection(db, 'municipalities', municipalityId, 'cities', cityDoc.id, 'areas')
+      );
+      
+      areasSnapshot.docs.forEach(areaDoc => {
+        const data = areaDoc.data();
+        // スケジュールデータを正規化して保存
+        areas[data.name] = normalizeSchedule(data.schedule);
+      });
+    }
 
     return {
       [prefecture]: {
@@ -136,14 +208,15 @@ export const fetchGarbageSchedule = async (municipalityId) => {
 /**
  * ごみ分別情報を取得（エリアごと、多言語対応）
  * @param {string} municipalityId - 都道府県ID
+ * @param {string} cityId - 市区町村ID（エリアが所属する実際のcityId）
  * @param {string} areaId - エリアID
  * @returns {Promise<Array>} ごみ分別品目の配列
  */
-export const fetchGarbageClassification = async (municipalityId, areaId) => {
+export const fetchGarbageClassification = async (municipalityId, cityId, areaId) => {
   try {
     // エリアのサブコレクションからgarbageItemsを取得
     const garbageItemsSnapshot = await getDocs(
-      collection(db, 'municipalities', municipalityId, 'areas', areaId, 'garbageItems')
+      collection(db, 'municipalities', municipalityId, 'cities', cityId, 'areas', areaId, 'garbageItems')
     );
     const currentLang = i18n.language || 'ja';
 

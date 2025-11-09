@@ -9,6 +9,7 @@
   },
   "home": {
     "selectPrefecture": "Select Prefecture",
+    "selectCity": "Select City",
     "selectArea": "Select Area",
     "todayCollection": "Today's Collection",
     "noCollection": "No collection today",
@@ -17,15 +18,19 @@
     "tomorrow": "Tomorrow",
     "daysLater": "In {{days}} days ({{dayName}})",
     "selectPrefectureTitle": "Please select a prefecture",
+    "selectCityTitle": "Please select a city",
     "selectAreaTitle": "Please select an area",
     "noPrefectureData": "No prefecture data available. Please register via the admin panel.",
+    "noCityData": "No city data available. Please register via the admin panel.",
     "noAreaData": "No area data available. Please register via the admin panel.",
     "cancel": "Cancel",
     "loading": "Loading...",
     "dataLoadError": "Failed to load data",
     "requestAreaAddition": "Can't find your area?",
+    "requestAreaAdditionNote": "We'll add it within the same day",
     "requestAreaButton": "📝 Request Area Addition",
     "searchPrefecture": "Search prefecture...",
+    "searchCity": "Search city...",
     "searchArea": "Search area..."
   },
   "calendar": {

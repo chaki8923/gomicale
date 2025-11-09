@@ -37,9 +37,13 @@ export default function SearchScreen() {
       setLoading(true);
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       const areaId = await AsyncStorage.getItem('selectedAreaId');
+      // エリアが所属する実際のcityIdを取得
+      const areaCityId = await AsyncStorage.getItem('selectedAreaCityId');
+      const cityId = await AsyncStorage.getItem('selectedCityId');
       
-      if (prefectureId && areaId) {
-        const items = await fetchGarbageClassification(prefectureId, areaId);
+      if (prefectureId && areaId && (areaCityId || cityId)) {
+        // areaCityIdがあればそれを使用、なければcityIdを使用
+        const items = await fetchGarbageClassification(prefectureId, areaCityId || cityId, areaId);
         setGarbageClassification(items);
       } else {
         // エリアが選択されていない場合は空配列

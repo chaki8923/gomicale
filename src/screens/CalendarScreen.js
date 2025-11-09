@@ -16,6 +16,7 @@ import { fetchAreaSchedule } from '../data/garbageData';
 export default function CalendarScreen() {
   const { t, i18n } = useTranslation();
   const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [selectedCityId, setSelectedCityId] = useState(null);
   const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
   const [areaSchedule, setAreaSchedule] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
@@ -39,13 +40,15 @@ export default function CalendarScreen() {
     try {
       setLoading(true);
       const areaId = await AsyncStorage.getItem('selectedAreaId');
+      const cityId = await AsyncStorage.getItem('selectedCityId');
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       
-      if (areaId && prefectureId) {
+      if (areaId && cityId && prefectureId) {
         setSelectedAreaId(areaId);
+        setSelectedCityId(cityId);
         setSelectedPrefectureId(prefectureId);
         
-        const schedule = await fetchAreaSchedule(prefectureId, areaId);
+        const schedule = await fetchAreaSchedule(prefectureId, cityId, areaId);
         setAreaSchedule(schedule.schedule);
       }
     } catch (error) {

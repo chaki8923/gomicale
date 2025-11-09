@@ -9,6 +9,7 @@
   },
   "home": {
     "selectPrefecture": "都道府県を選択",
+    "selectCity": "市区町村を選択",
     "selectArea": "エリアを選択",
     "todayCollection": "今日の収集",
     "noCollection": "今日の収集はありません",
@@ -17,15 +18,19 @@
     "tomorrow": "明日",
     "daysLater": "{{days}}日後（{{dayName}}曜日）",
     "selectPrefectureTitle": "都道府県を選択してください",
+    "selectCityTitle": "市区町村を選択してください",
     "selectAreaTitle": "エリアを選択してください",
     "noPrefectureData": "都道府県データがありません。管理画面から登録してください。",
+    "noCityData": "市区町村データがありません。管理画面から登録してください。",
     "noAreaData": "エリアデータがありません。管理画面から登録してください。",
     "cancel": "キャンセル",
     "loading": "読み込み中...",
     "dataLoadError": "データの読み込みに失敗しました",
     "requestAreaAddition": "お住まいの地域がない場合",
+    "requestAreaAdditionNote": "リクエスト後、当日中に追加します",
     "requestAreaButton": "📝 地域追加をリクエスト",
     "searchPrefecture": "都道府県を検索...",
+    "searchCity": "市区町村を検索...",
     "searchArea": "エリアを検索..."
   },
   "calendar": {
