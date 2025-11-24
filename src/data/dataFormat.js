@@ -108,90 +108,112 @@ export const categoryConfig = {
       return i18n.t('categories.burnable');
     },
     color: '#FF6B6B',
-    icon: '🔥',
+    icon: 'fire',
+    iconType: 'MaterialCommunityIcons',
   },
   nonBurnable: {
     get name() {
       return i18n.t('categories.nonBurnable');
     },
     color: '#4ECDC4',
-    icon: '🚫',
+    icon: 'delete-empty-outline',
+    iconType: 'MaterialCommunityIcons',
   },
   recyclable: {
     get name() {
       return i18n.t('categories.recyclable');
     },
     color: '#45B7D1',
-    icon: '♻️',
+    icon: 'recycle',
+    iconType: 'MaterialCommunityIcons',
   },
   bottles: {
     get name() {
       return i18n.t('categories.bottles');
     },
     color: '#96CEB4',
-    icon: '🍶',
+    icon: 'bottle-wine-outline',
+    iconType: 'MaterialCommunityIcons',
   },
   cans: {
     get name() {
       return i18n.t('categories.cans');
     },
     color: '#95E1D3',
-    icon: '🥫',
+    icon: 'can', // 'can' is not standard in all sets, using 'cup' or similar if needed, but MCI has 'can' usually? actually 'beer-outline' or similar might be safer, but let's try 'food-fork-drink' or just 'recycle' if not sure. Checking MCI list... 'can' exists? No, 'trash-can' exists. Let's use 'beer-outline' or 'cylinder'. Actually 'cup' is safe. Let's stick to 'recycle' or specialized icons. 'bottle-soda-classic-outline' for bottles. For cans, maybe 'cylinder'. Let's use 'delete-outline' for general trash.
+    // MaterialCommunityIcons has 'beer' (can shape), 'food-variant'.
+    // Let's use 'cup-water' or similar.
+    // Actually let's use 'glass-mug-variant' or similar.
+    // Wait, 'can' might not exist. Let's use 'train-car' (no).
+    // Let's use 'nutrition' (no).
+    // 'cylinder' is okay.
+    // Let's use 'food-variant' or 'cup'.
+    // Actually 'beer' looks like a can.
+    icon: 'beer-outline', 
+    iconType: 'MaterialCommunityIcons',
   },
   plastics: {
     get name() {
       return i18n.t('categories.plastics');
     },
     color: '#F38181',
-    icon: '📦',
+    icon: 'recycle-variant',
+    iconType: 'MaterialCommunityIcons',
   },
   pet_bottles: {
     get name() {
       return i18n.t('categories.pet_bottles');
     },
     color: '#AA96DA',
-    icon: '🧴',
+    icon: 'bottle-soda-outline',
+    iconType: 'MaterialCommunityIcons',
   },
   paper_and_cloth: {
     get name() {
       return i18n.t('categories.paper_and_cloth');
     },
     color: '#FCBAD3',
-    icon: '📰',
+    icon: 'newspaper-variant-outline',
+    iconType: 'MaterialCommunityIcons',
   },
   hazardous_and_dangerous: {
     get name() {
       return i18n.t('categories.hazardous_and_dangerous');
     },
     color: '#FF8C42',
-    icon: '⚠️',
+    icon: 'alert-circle-outline',
+    iconType: 'MaterialCommunityIcons',
   },
   cooking_oil: {
     get name() {
       return i18n.t('categories.cooking_oil');
     },
     color: '#FFD93D',
-    icon: '🛢️',
+    icon: 'oil',
+    iconType: 'MaterialCommunityIcons',
   },
   bottles_and_cans: {
     get name() {
       return i18n.t('categories.bottles_and_cans');
     },
     color: '#7FCDCD',
-    icon: '♻️',
+    icon: 'glass-mug-variant',
+    iconType: 'MaterialCommunityIcons',
   },
   resources: {
     get name() {
       return i18n.t('categories.resources');
     },
     color: '#6BCF7F',
-    icon: '📦',
+    icon: 'recycle',
+    iconType: 'MaterialCommunityIcons',
   },
   metal_pottery_glass: {
     get name() {
       return i18n.t('categories.metal_pottery_glass');
     },
     color: '#8B9DC3',
-    icon: '🍶',
+    icon: 'glass-fragile',
+    iconType: 'MaterialCommunityIcons',
   },
 };

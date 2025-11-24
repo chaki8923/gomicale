@@ -11,10 +11,13 @@ import {
   ActivityIndicator,
   Linking,
   Alert,
+  Platform,
+  SafeAreaView,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchMunicipalities, fetchCities, fetchAreas, fetchAreaSchedule } from '../data/garbageData';
 import { saveLanguage } from '../i18n/i18n';
@@ -388,559 +391,574 @@ export default function HomeScreen() {
   if (loading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color="#4ECDC4" />
+        <ActivityIndicator size="large" color="#2089DC" />
         <Text style={styles.loadingText}>{t('home.loading')}</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{t('app.title')}</Text>
+        <View style={styles.headerTop}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{t('app.title')}</Text>
+          </View>
           <TouchableOpacity
             style={styles.languageButton}
             onPress={() => setLanguageModalVisible(true)}
           >
+            <Ionicons name="globe-outline" size={20} color="#555" />
             <Text style={styles.languageButtonText}>
-              🌐 {i18n.language.toUpperCase()}
+              {i18n.language.toUpperCase()}
             </Text>
           </TouchableOpacity>
         </View>
+
+        <View style={styles.locationContainer}>
+          <TouchableOpacity
+            style={styles.locationButton}
+            onPress={changeLocation}
+          >
+            <Ionicons name="location-outline" size={18} color="#2089DC" />
+            <Text style={styles.locationButtonText} numberOfLines={1}>
+              {selectedPrefecture || t('home.selectPrefecture')}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color="#999" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.locationButton}
+            onPress={() => selectedPrefectureId ? setCityModalVisible(true) : changeLocation()}
+          >
+            <Ionicons name="business-outline" size={18} color="#2089DC" />
+            <Text style={styles.locationButtonText} numberOfLines={1}>
+              {selectedCityName || t('home.selectCity')}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color="#999" />
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
-          style={styles.municipalityButton}
-          onPress={changeLocation}
-        >
-          <Text style={styles.municipalityButtonText}>
-            📍 {selectedPrefecture || t('home.selectPrefecture')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.cityButton}
-          onPress={() => selectedPrefectureId ? setCityModalVisible(true) : changeLocation()}
-        >
-          <Text style={styles.cityButtonText}>
-            🏙️ {selectedCityName || t('home.selectCity')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.areaButton}
+          style={styles.areaSelectButton}
           onPress={() => selectedCityId ? setAreaModalVisible(true) : (selectedPrefectureId ? setCityModalVisible(true) : changeLocation())}
         >
-          <Text style={styles.areaButtonText}>
-            🏘️ {selectedAreaName || t('home.selectArea')}
+          <Ionicons name="home-outline" size={20} color="#FFFFFF" />
+          <Text style={styles.areaSelectButtonText} numberOfLines={1}>
+            {selectedAreaName || t('home.selectArea')}
           </Text>
+          <Ionicons name="chevron-down" size={18} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
-      {todaySchedule.length > 0 ? (
-        <View style={styles.todaySection}>
-          <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
-          {todaySchedule.map((item, index) => (
+      <ScrollView style={styles.contentContainer} contentContainerStyle={{ paddingBottom: 20 }}>
+        {todaySchedule.length > 0 ? (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="today-outline" size={22} color="#2089DC" />
+              <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
+            </View>
+            {todaySchedule.map((item, index) => (
+              <View
+                key={index}
+                style={[styles.card, { borderLeftColor: item.color }]}
+              >
+                <View style={[styles.iconContainer, { backgroundColor: `${item.color}20` }]}>
+                  <MaterialCommunityIcons name={item.icon} size={32} color={item.color} />
+                </View>
+                <Text style={styles.cardTitle}>{item.name}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="today-outline" size={22} color="#95A5A6" />
+              <Text style={[styles.sectionTitle, { color: '#95A5A6' }]}>{t('home.todayCollection')}</Text>
+            </View>
+            <View style={styles.emptyCard}>
+              <MaterialCommunityIcons name="check-circle-outline" size={48} color="#E0E0E0" />
+              <Text style={styles.noScheduleText}>{t('home.noCollection')}</Text>
+            </View>
+          </View>
+        )}
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="calendar-outline" size={22} color="#2089DC" />
+            <Text style={styles.sectionTitle}>{t('home.nextCollection')}</Text>
+          </View>
+          {getNextSchedule().map((item, index) => (
             <View
               key={index}
               style={[styles.card, { borderLeftColor: item.color }]}
             >
-              <Text style={styles.cardIcon}>{item.icon}</Text>
-              <Text style={styles.cardTitle}>{item.name}</Text>
+              <View style={[styles.iconContainer, { backgroundColor: `${item.color}20` }]}>
+                <MaterialCommunityIcons name={item.icon} size={28} color={item.color} />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>{item.name}</Text>
+                <View style={styles.dateBadge}>
+                  <Ionicons name="time-outline" size={14} color="#7F8C8D" />
+                  <Text style={styles.cardSubtitle}>
+                    {item.daysUntil === 0
+                      ? t('home.today')
+                      : item.daysUntil === 1
+                      ? t('home.tomorrow')
+                      : t('home.daysLater', { days: item.daysUntil, dayName: getWeekdayName(item.date.getDay()) })}
+                  </Text>
+                </View>
+              </View>
             </View>
           ))}
         </View>
-      ) : (
-        <View style={styles.todaySection}>
-          <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
-          <Text style={styles.noSchedule}>{t('home.noCollection')}</Text>
-        </View>
-      )}
+      </ScrollView>
 
-      <View style={styles.nextSection}>
-        <Text style={styles.sectionTitle}>{t('home.nextCollection')}</Text>
-        {getNextSchedule().map((item, index) => (
-          <View
-            key={index}
-            style={[styles.card, { borderLeftColor: item.color }]}
-          >
-            <Text style={styles.cardIcon}>{item.icon}</Text>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{item.name}</Text>
-              <Text style={styles.cardSubtitle}>
-                {item.daysUntil === 0
-                  ? t('home.today')
-                  : item.daysUntil === 1
-                  ? t('home.tomorrow')
-                  : t('home.daysLater', { days: item.daysUntil, dayName: getWeekdayName(item.date.getDay()) })}
-              </Text>
-            </View>
-          </View>
-        ))}
-      </View>
+      {/* 共通モーダルコンポーネント */}
+      {[
+        { visible: prefectureModalVisible, close: () => setPrefectureModalVisible(false), title: t('home.selectPrefectureTitle'), data: prefectures, onSelect: selectPrefecture, searchVal: prefectureSearchQuery, setSearch: setPrefectureSearchQuery, placeholder: t('home.searchPrefecture'), displayKey: 'prefecture', noData: t('home.noPrefectureData') },
+        { visible: cityModalVisible, close: () => setCityModalVisible(false), title: t('home.selectCityTitle'), data: cities, onSelect: selectCity, searchVal: citySearchQuery, setSearch: setCitySearchQuery, placeholder: t('home.searchCity'), displayKey: 'name', noData: t('home.noCityData') },
+        { visible: areaModalVisible, close: () => setAreaModalVisible(false), title: t('home.selectAreaTitle'), data: areas, onSelect: selectArea, searchVal: areaSearchQuery, setSearch: setAreaSearchQuery, placeholder: t('home.searchArea'), displayKey: 'name', noData: t('home.noAreaData'), showRequest: true }
+      ].map((modal, idx) => (
+        <Modal
+          key={idx}
+          animationType="slide"
+          transparent={true}
+          visible={modal.visible}
+          onRequestClose={modal.close}
+        >
+          <TouchableWithoutFeedback onPress={modal.close}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>{modal.title}</Text>
+                    <TouchableOpacity onPress={modal.close} style={styles.closeIconButton}>
+                      <Ionicons name="close" size={24} color="#555" />
+                    </TouchableOpacity>
+                  </View>
+                  
+                  <View style={styles.searchContainer}>
+                    <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+                    <TextInput
+                      style={styles.searchInput}
+                      placeholder={modal.placeholder}
+                      value={modal.searchVal}
+                      onChangeText={modal.setSearch}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      placeholderTextColor="#999"
+                    />
+                  </View>
 
-      {/* 都道府県選択モーダル */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={prefectureModalVisible}
-        onRequestClose={() => {
-          setPrefectureModalVisible(false);
-          setPrefectureSearchQuery('');
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => {
-          setPrefectureModalVisible(false);
-          setPrefectureSearchQuery('');
-        }}>
-          <View style={styles.modalContainer}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{t('home.selectPrefectureTitle')}</Text>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder={t('home.searchPrefecture')}
-                  value={prefectureSearchQuery}
-                  onChangeText={setPrefectureSearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <ScrollView style={styles.modalScrollView}>
-                  {prefectures.length === 0 ? (
-                    <Text style={styles.noDataText}>
-                      {t('home.noPrefectureData')}
-                    </Text>
-                  ) : (
-                    prefectures
-                      .filter(prefecture => 
-                        prefecture.prefecture.toLowerCase().includes(prefectureSearchQuery.toLowerCase())
-                      )
-                      .map((prefecture, index) => (
+                  <ScrollView style={styles.modalList} contentContainerStyle={{ paddingBottom: 20 }}>
+                    {modal.data.length === 0 ? (
+                      <View style={styles.noDataContainer}>
+                        <MaterialCommunityIcons name="file-search-outline" size={48} color="#E0E0E0" />
+                        <Text style={styles.noDataText}>{modal.noData}</Text>
+                      </View>
+                    ) : (
+                      modal.data
+                        .filter(item => 
+                          item[modal.displayKey].toLowerCase().includes(modal.searchVal.toLowerCase())
+                        )
+                        .map((item, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            style={styles.listItem}
+                            onPress={() => {
+                              modal.onSelect(item);
+                              modal.setSearch('');
+                            }}
+                          >
+                            <Text style={styles.listItemText}>{item[modal.displayKey]}</Text>
+                            <Ionicons name="chevron-forward" size={18} color="#DDD" />
+                          </TouchableOpacity>
+                        ))
+                    )}
+                    
+                    {modal.showRequest && (
+                      <View style={styles.requestAreaContainer}>
+                        <View style={styles.requestHeader}>
+                          <MaterialCommunityIcons name="map-plus" size={20} color="#2089DC" />
+                          <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
+                        </View>
+                        <Text style={styles.requestAreaNote}>{t('home.requestAreaAdditionNote')}</Text>
                         <TouchableOpacity
-                          key={index}
-                          style={styles.modalButton}
-                          onPress={() => {
-                            selectPrefecture(prefecture);
-                            setPrefectureSearchQuery('');
-                          }}
+                          style={styles.requestAreaButton}
+                          onPress={openRequestForm}
                         >
-                          <Text style={styles.modalButtonText}>
-                            {prefecture.prefecture}
-                          </Text>
+                          <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
+                          <Ionicons name="open-outline" size={16} color="#FFF" style={{ marginLeft: 4 }} />
                         </TouchableOpacity>
-                      ))
-                  )}
-                </ScrollView>
-                {selectedPrefectureId && (
-                  <TouchableOpacity
-                    style={[styles.modalButton, styles.modalCancelButton]}
-                    onPress={() => {
-                      setPrefectureModalVisible(false);
-                      setPrefectureSearchQuery('');
-                    }}
-                  >
-                    <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
-      {/* 市区町村選択モーダル */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={cityModalVisible}
-        onRequestClose={() => {
-          setCityModalVisible(false);
-          setCitySearchQuery('');
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => {
-          setCityModalVisible(false);
-          setCitySearchQuery('');
-        }}>
-          <View style={styles.modalContainer}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{t('home.selectCityTitle')}</Text>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder={t('home.searchCity')}
-                  value={citySearchQuery}
-                  onChangeText={setCitySearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <ScrollView style={styles.modalScrollView}>
-                  {cities.length === 0 ? (
-                    <Text style={styles.noDataText}>
-                      {t('home.noCityData')}
-                    </Text>
-                  ) : (
-                    cities
-                      .filter(city => 
-                        city.name.toLowerCase().includes(citySearchQuery.toLowerCase())
-                      )
-                      .map((city, index) => (
-                        <TouchableOpacity
-                          key={index}
-                          style={styles.modalButton}
-                          onPress={() => {
-                            selectCity(city);
-                            setCitySearchQuery('');
-                          }}
-                        >
-                          <Text style={styles.modalButtonText}>
-                            {city.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
-                  )}
-                </ScrollView>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.modalCancelButton]}
-                  onPress={() => {
-                    setCityModalVisible(false);
-                    setCitySearchQuery('');
-                  }}
-                >
-                  <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
-      {/* エリア選択モーダル */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={areaModalVisible}
-        onRequestClose={() => {
-          setAreaModalVisible(false);
-          setAreaSearchQuery('');
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => {
-          setAreaModalVisible(false);
-          setAreaSearchQuery('');
-        }}>
-          <View style={styles.modalContainer}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{t('home.selectAreaTitle')}</Text>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder={t('home.searchArea')}
-                  value={areaSearchQuery}
-                  onChangeText={setAreaSearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <ScrollView style={styles.modalScrollView}>
-                  {areas.length === 0 ? (
-                    <Text style={styles.noDataText}>
-                      {t('home.noAreaData')}
-                    </Text>
-                  ) : (
-                    areas
-                      .filter(area => 
-                        area.name.toLowerCase().includes(areaSearchQuery.toLowerCase())
-                      )
-                      .map((area, index) => (
-                        <TouchableOpacity
-                          key={index}
-                          style={styles.modalButton}
-                          onPress={() => {
-                            selectArea(area);
-                            setAreaSearchQuery('');
-                          }}
-                        >
-                          <Text style={styles.modalButtonText}>{area.name}</Text>
-                        </TouchableOpacity>
-                      ))
-                  )}
-                </ScrollView>
-                <View style={styles.requestAreaContainer}>
-                  <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
-                  <Text style={styles.requestAreaNote}>✨ {t('home.requestAreaAdditionNote')}</Text>
-                  <TouchableOpacity
-                    style={styles.requestAreaButton}
-                    onPress={openRequestForm}
-                  >
-                    <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
-                  </TouchableOpacity>
+                      </View>
+                    )}
+                  </ScrollView>
                 </View>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.modalCancelButton]}
-                  onPress={() => {
-                    setAreaModalVisible(false);
-                    setAreaSearchQuery('');
-                  }}
-                >
-                  <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      ))}
 
       {/* 言語選択モーダル */}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={languageModalVisible}
         onRequestClose={() => setLanguageModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{t('settings.selectLanguage')}</Text>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => changeLanguage('ja')}
-            >
-              <Text style={styles.modalButtonText}>{t('settings.japanese')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => changeLanguage('en')}
-            >
-              <Text style={styles.modalButtonText}>{t('settings.english')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalCancelButton]}
-              onPress={() => setLanguageModalVisible(false)}
-            >
-              <Text style={styles.modalCancelText}>{t('home.cancel')}</Text>
-            </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => setLanguageModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={[styles.modalContainer, { height: 'auto', maxHeight: 300 }]}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>{t('settings.selectLanguage')}</Text>
+                  <TouchableOpacity onPress={() => setLanguageModalVisible(false)} style={styles.closeIconButton}>
+                    <Ionicons name="close" size={24} color="#555" />
+                  </TouchableOpacity>
+                </View>
+                <View style={{ padding: 20 }}>
+                  <TouchableOpacity
+                    style={[styles.languageOption, i18n.language === 'ja' && styles.selectedLanguage]}
+                    onPress={() => changeLanguage('ja')}
+                  >
+                    <Text style={[styles.languageOptionText, i18n.language === 'ja' && styles.selectedLanguageText]}>
+                      {t('settings.japanese')}
+                    </Text>
+                    {i18n.language === 'ja' && <Ionicons name="checkmark" size={20} color="#2089DC" />}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.languageOption, i18n.language === 'en' && styles.selectedLanguage]}
+                    onPress={() => changeLanguage('en')}
+                  >
+                    <Text style={[styles.languageOptionText, i18n.language === 'en' && styles.selectedLanguageText]}>
+                      {t('settings.english')}
+                    </Text>
+                    {i18n.language === 'en' && <Ionicons name="checkmark" size={20} color="#2089DC" />}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
+    backgroundColor: '#F5F7FA',
   },
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 12,
     fontSize: 16,
     color: '#7F8C8D',
-  },
-  noDataText: {
-    fontSize: 14,
-    color: '#95A5A6',
-    textAlign: 'center',
-    padding: 20,
+    fontWeight: '500',
   },
   header: {
     padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E1E8ED',
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 5,
+    zIndex: 10,
   },
-  titleRow: {
+  headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 16,
+  },
+  titleContainer: {
+    flex: 1,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '800',
     color: '#2C3E50',
+    letterSpacing: 0.5,
   },
   languageButton: {
-    backgroundColor: '#95A5A6',
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F2F5',
+    paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 20,
   },
   languageButtonText: {
-    color: '#fff',
+    color: '#555',
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 12,
+  },
+  locationButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F2F5',
+    padding: 10,
+    borderRadius: 12,
+    justifyContent: 'space-between',
+  },
+  locationButtonText: {
+    flex: 1,
+    color: '#333',
     fontSize: 14,
     fontWeight: '600',
+    marginLeft: 6,
+    marginRight: 6,
   },
-  municipalityButton: {
-    backgroundColor: '#5F9EA0',
-    padding: 12,
-    borderRadius: 8,
+  areaSelectButton: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    backgroundColor: '#2089DC',
+    padding: 14,
+    borderRadius: 14,
+    justifyContent: 'space-between',
+    shadowColor: '#2089DC',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  municipalityButtonText: {
-    color: '#fff',
+  areaSelectButtonText: {
+    flex: 1,
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    marginLeft: 8,
   },
-  cityButton: {
-    backgroundColor: '#48B3A4',
-    padding: 12,
-    borderRadius: 8,
+  contentContainer: {
+    paddingTop: 20,
+  },
+  section: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-  },
-  cityButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  areaButton: {
-    backgroundColor: '#4ECDC4',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  areaButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  todaySection: {
-    padding: 20,
-  },
-  nextSection: {
-    padding: 20,
-    paddingTop: 0,
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
     color: '#2C3E50',
-    marginBottom: 15,
+    marginLeft: 8,
   },
   card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    borderLeftWidth: 5,
+    borderLeftWidth: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  cardIcon: {
-    fontSize: 32,
-    marginRight: 15,
+  emptyCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 24,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#F0F2F5',
+    borderStyle: 'dashed',
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
   },
   cardContent: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
     color: '#2C3E50',
+    marginBottom: 4,
+  },
+  dateBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   cardSubtitle: {
-    fontSize: 14,
-    color: '#7F8C8D',
-    marginTop: 4,
-  },
-  noSchedule: {
-    fontSize: 16,
-    color: '#95A5A6',
-    textAlign: 'center',
-    paddingVertical: 30,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 25,
-    width: '80%',
-    maxWidth: 400,
-    maxHeight: '80%',
-  },
-  modalScrollView: {
-    maxHeight: 400,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2C3E50',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  searchInput: {
-    backgroundColor: '#F7F9FC',
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#E1E8ED',
-    marginBottom: 15,
-  },
-  modalButton: {
-    backgroundColor: '#4ECDC4',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  modalCancelButton: {
-    backgroundColor: '#E1E8ED',
-    marginTop: 10,
-  },
-  modalCancelText: {
-    color: '#2C3E50',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  requestAreaContainer: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: '#FFF9E6',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FFD93D',
-  },
-  requestAreaText: {
     fontSize: 13,
-    color: '#856404',
-    marginBottom: 4,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  requestAreaNote: {
-    fontSize: 12,
-    color: '#28a745',
-    marginBottom: 10,
-    textAlign: 'center',
+    color: '#7F8C8D',
+    marginLeft: 4,
     fontWeight: '500',
   },
-  requestAreaButton: {
-    backgroundColor: '#FFD93D',
-    padding: 12,
-    borderRadius: 8,
+  noScheduleText: {
+    fontSize: 15,
+    color: '#95A5A6',
+    marginTop: 12,
+    fontWeight: '500',
+  },
+  
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    height: '85%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F2F5',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2C3E50',
+  },
+  closeIconButton: {
+    padding: 4,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F7FA',
+    margin: 20,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    height: 44,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
+    height: '100%',
+  },
+  modalList: {
+    paddingHorizontal: 20,
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F2F5',
+  },
+  listItemText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  noDataContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 40,
+  },
+  noDataText: {
+    marginTop: 12,
+    fontSize: 15,
+    color: '#95A5A6',
+  },
+  
+  // Request Area
+  requestAreaContainer: {
+    marginTop: 24,
+    padding: 16,
+    backgroundColor: '#EBF8FF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#BEE3F8',
+  },
+  requestHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  requestAreaText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#2C5282',
+    marginLeft: 8,
+  },
+  requestAreaNote: {
+    fontSize: 13,
+    color: '#4A5568',
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  requestAreaButton: {
+    flexDirection: 'row',
+    backgroundColor: '#2089DC',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   requestAreaButtonText: {
-    color: '#2C3E50',
+    color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+
+  // Language Options
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F2F5',
+  },
+  selectedLanguage: {
+    backgroundColor: '#F0F9FF',
+    marginHorizontal: -20,
+    paddingHorizontal: 20,
+  },
+  languageOptionText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  selectedLanguageText: {
+    color: '#2089DC',
+    fontWeight: '700',
   },
 });

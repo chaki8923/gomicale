@@ -10,10 +10,13 @@ import {
   ScrollView,
   Modal,
   ActivityIndicator,
+  SafeAreaView,
+  Platform,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { categoryConfig } from '../data/dataFormat';
 import { fetchGarbageClassification } from '../data/garbageData';
 
@@ -85,11 +88,20 @@ export default function SearchScreen() {
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>
           <View style={styles.categoryBadge}>
-            <Text style={styles.categoryIcon}>{config.icon}</Text>
-            <Text style={styles.categoryText}>{config.name}</Text>
+            <MaterialCommunityIcons 
+              name={config.icon} 
+              size={14} 
+              color={config.color} 
+              style={styles.categoryIcon} 
+            />
+            <Text style={[styles.categoryText, { color: config.color }]}>
+              {config.name}
+            </Text>
           </View>
         </View>
-        <Text style={styles.arrowIcon}>›</Text>
+        <View style={styles.arrowContainer}>
+          <Ionicons name="chevron-forward" size={20} color="#D1D1D6" />
+        </View>
       </TouchableOpacity>
     );
   };
@@ -97,23 +109,32 @@ export default function SearchScreen() {
   if (loading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color="#4ECDC4" />
+        <ActivityIndicator size="large" color="#2089DC" />
         <Text style={styles.loadingText}>{t('search.loading')}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder={t('search.placeholder')}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder={t('search.placeholder')}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholderTextColor="#999"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+              <Ionicons name="close-circle" size={18} color="#999" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <FlatList
@@ -121,8 +142,14 @@ export default function SearchScreen() {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons 
+              name={searchQuery ? "file-search-outline" : "magnify"} 
+              size={64} 
+              color="#E0E0E0" 
+            />
             <Text style={styles.emptyText}>
               {searchQuery
                 ? t('search.noResults')
@@ -141,218 +168,282 @@ export default function SearchScreen() {
           onRequestClose={() => setModalVisible(false)}
         >
           <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-            <View style={styles.modalContainer}>
+            <View style={styles.modalOverlay}>
               <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-                <View style={styles.modalContent}>
-                  <View
-                    style={[
-                      styles.modalHeader,
-                      { backgroundColor: categoryConfig[selectedItem.category].color },
-                    ]}
-                  >
-                    <Text style={styles.modalIcon}>
-                      {categoryConfig[selectedItem.category].icon}
-                    </Text>
-                    <Text style={styles.modalTitle}>{selectedItem.name}</Text>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalHeader}>
+                    <View style={styles.modalTitleContainer}>
+                      <Text style={styles.modalTitle}>{selectedItem.name}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                      <Ionicons name="close" size={24} color="#555" />
+                    </TouchableOpacity>
                   </View>
 
                   <ScrollView style={styles.modalScrollView}>
                     <View style={styles.modalBody}>
-                      <View style={styles.categoryBadgeLarge}>
-                        <Text style={styles.categoryTextLarge}>
+                      <View 
+                        style={[
+                          styles.categoryBadgeLarge, 
+                          { backgroundColor: `${categoryConfig[selectedItem.category].color}15` }
+                        ]}
+                      >
+                        <MaterialCommunityIcons 
+                          name={categoryConfig[selectedItem.category].icon} 
+                          size={24} 
+                          color={categoryConfig[selectedItem.category].color} 
+                        />
+                        <Text 
+                          style={[
+                            styles.categoryTextLarge, 
+                            { color: categoryConfig[selectedItem.category].color }
+                          ]}
+                        >
                           {categoryConfig[selectedItem.category].name}
                         </Text>
                       </View>
 
                       <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>{t('search.howToDispose')}</Text>
+                        <View style={styles.sectionHeader}>
+                          <Ionicons name="information-circle-outline" size={20} color="#555" />
+                          <Text style={styles.sectionTitle}>{t('search.howToDispose')}</Text>
+                        </View>
                         <Text style={styles.sectionText}>
                           {selectedItem.description}
                         </Text>
                       </View>
 
-                      <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>{t('search.examples')}</Text>
-                        {selectedItem.examples.map((example, index) => (
-                          <Text key={index} style={styles.exampleText}>
-                            • {example}
-                          </Text>
-                        ))}
-                      </View>
+                      {selectedItem.examples && selectedItem.examples.length > 0 && (
+                        <View style={styles.section}>
+                          <View style={styles.sectionHeader}>
+                            <Ionicons name="list-outline" size={20} color="#555" />
+                            <Text style={styles.sectionTitle}>{t('search.examples')}</Text>
+                          </View>
+                          <View style={styles.examplesContainer}>
+                            {selectedItem.examples.map((example, index) => (
+                              <View key={index} style={styles.exampleItem}>
+                                <View style={styles.bullet} />
+                                <Text style={styles.exampleText}>{example}</Text>
+                              </View>
+                            ))}
+                          </View>
+                        </View>
+                      )}
                     </View>
                   </ScrollView>
-
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Text style={styles.closeButtonText}>{t('search.close')}</Text>
-                  </TouchableOpacity>
                 </View>
               </TouchableWithoutFeedback>
             </View>
           </TouchableWithoutFeedback>
         </Modal>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
+    backgroundColor: '#F5F7FA',
   },
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 12,
     fontSize: 16,
     color: '#7F8C8D',
+    fontWeight: '500',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 4,
+    zIndex: 10,
   },
   searchContainer: {
-    padding: 15,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E1E8ED',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F2F5',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 48,
+  },
+  searchIcon: {
+    marginRight: 8,
   },
   searchInput: {
-    backgroundColor: '#F7F9FC',
-    padding: 12,
-    borderRadius: 8,
+    flex: 1,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#E1E8ED',
+    color: '#333',
+    height: '100%',
+  },
+  clearButton: {
+    padding: 4,
   },
   listContainer: {
-    padding: 15,
+    padding: 16,
+    paddingBottom: 40,
   },
   card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderLeftWidth: 5,
+    borderLeftWidth: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardContent: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
     color: '#2C3E50',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   categoryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   categoryIcon: {
-    fontSize: 16,
-    marginRight: 5,
+    marginRight: 6,
   },
   categoryText: {
-    fontSize: 14,
-    color: '#7F8C8D',
+    fontSize: 13,
+    fontWeight: '600',
   },
-  arrowIcon: {
-    fontSize: 30,
-    color: '#BDC3C7',
-    marginLeft: 10,
+  arrowContainer: {
+    marginLeft: 12,
   },
   emptyContainer: {
     padding: 40,
     alignItems: 'center',
+    marginTop: 40,
   },
   emptyText: {
     fontSize: 16,
     color: '#95A5A6',
     textAlign: 'center',
+    marginTop: 16,
+    fontWeight: '500',
+  },
+  
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'flex-end',
   },
   modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '80%',
-  },
-  modalScrollView: {
-    maxHeight: 400,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    height: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 20,
   },
   modalHeader: {
-    padding: 25,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F2F5',
   },
-  modalIcon: {
-    fontSize: 48,
-    marginBottom: 10,
+  modalTitleContainer: {
+    flex: 1,
   },
   modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2C3E50',
+  },
+  closeButton: {
+    padding: 4,
+    marginLeft: 12,
+  },
+  modalScrollView: {
+    flex: 1,
   },
   modalBody: {
-    padding: 20,
+    padding: 24,
+    paddingTop: 10,
   },
   categoryBadgeLarge: {
-    backgroundColor: '#F7F9FC',
-    padding: 12,
-    borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 32,
+    alignSelf: 'flex-start',
   },
   categoryTextLarge: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#2C3E50',
+    fontWeight: '700',
+    marginLeft: 8,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 32,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2C3E50',
-    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#555',
+    marginLeft: 8,
   },
   sectionText: {
     fontSize: 16,
-    color: '#34495E',
-    lineHeight: 24,
+    color: '#333',
+    lineHeight: 26,
+  },
+  examplesContainer: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    padding: 16,
+  },
+  exampleItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  bullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#95A5A6',
+    marginTop: 8,
+    marginRight: 10,
   },
   exampleText: {
-    fontSize: 16,
-    color: '#34495E',
-    marginBottom: 8,
-    paddingLeft: 10,
-  },
-  closeButton: {
-    backgroundColor: '#4ECDC4',
-    padding: 18,
-    margin: 20,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 15,
+    color: '#444',
+    flex: 1,
+    lineHeight: 22,
   },
 });

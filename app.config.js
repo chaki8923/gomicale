@@ -14,6 +14,9 @@ export default {
     android: {
       package: "com.gomikare.app"
     },
+    plugins: [
+      "expo-font"
+    ],
     extra: {
       firebaseApiKey: process.env.FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
