@@ -26,6 +26,8 @@ LocaleConfig.locales['ja'] = {
 };
 LocaleConfig.defaultLocale = 'ja';
 
+const getTodayString = () => new Date().toISOString().split('T')[0];
+
 export default function CalendarScreen() {
   const { t, i18n } = useTranslation();
   const [selectedAreaId, setSelectedAreaId] = useState(null);
@@ -33,13 +35,15 @@ export default function CalendarScreen() {
   const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
   const [areaSchedule, setAreaSchedule] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getTodayString());
   const [loading, setLoading] = useState(true);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
     useCallback(() => {
-      loadSelectedArea();
+      const today = getTodayString();
+      setSelectedDate(today);
+      loadSelectedArea(today);
     }, [])
   );
 
@@ -55,7 +59,7 @@ export default function CalendarScreen() {
     }
   }, [selectedAreaId, areaSchedule]);
 
-  const loadSelectedArea = async () => {
+  const loadSelectedArea = async (todayString = getTodayString()) => {
     try {
       setLoading(true);
       const areaId = await AsyncStorage.getItem('selectedAreaId');
@@ -66,6 +70,7 @@ export default function CalendarScreen() {
         setSelectedAreaId(areaId);
         setSelectedCityId(cityId);
         setSelectedPrefectureId(prefectureId);
+        setSelectedDate(todayString);
         
         const schedule = await fetchAreaSchedule(prefectureId, cityId, areaId);
         setAreaSchedule(schedule.schedule);
