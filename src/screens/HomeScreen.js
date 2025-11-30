@@ -53,6 +53,7 @@ export default function HomeScreen() {
   const [prefectureSearchQuery, setPrefectureSearchQuery] = useState('');
   const [citySearchQuery, setCitySearchQuery] = useState('');
   const [areaSearchQuery, setAreaSearchQuery] = useState('');
+  const [isMyArea, setIsMyArea] = useState(false);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -100,6 +101,8 @@ export default function HomeScreen() {
       const savedCityName = await AsyncStorage.getItem('selectedCityName');
       const savedAreaId = await AsyncStorage.getItem('selectedAreaId');
       const savedAreaName = await AsyncStorage.getItem('selectedAreaName');
+      const savedIsMyArea = await AsyncStorage.getItem('isMyArea');
+      setIsMyArea(savedIsMyArea === 'true');
 
       if (savedPrefectureId && prefecturesList.length > 0) {
         const prefecture = prefecturesList.find(p => p.id === savedPrefectureId);
@@ -192,10 +195,12 @@ export default function HomeScreen() {
       setSelectedCityName(null);
       setSelectedAreaId(null);
       setSelectedAreaName(null);
+      setIsMyArea(false);
       await AsyncStorage.removeItem('selectedCityId');
       await AsyncStorage.removeItem('selectedCityName');
       await AsyncStorage.removeItem('selectedAreaId');
       await AsyncStorage.removeItem('selectedAreaName');
+      await AsyncStorage.removeItem('isMyArea');
       
       await loadPrefectureData(prefecture.id);
       setPrefectureModalVisible(false);
@@ -219,8 +224,10 @@ export default function HomeScreen() {
       // 以前のエリア選択をクリア
       setSelectedAreaId(null);
       setSelectedAreaName(null);
+      setIsMyArea(false);
       await AsyncStorage.removeItem('selectedAreaId');
       await AsyncStorage.removeItem('selectedAreaName');
+      await AsyncStorage.removeItem('isMyArea');
       
       // cityオブジェクト全体を渡す（idsプロパティを含む）
       await loadCityData(selectedPrefectureId, city);
@@ -242,12 +249,42 @@ export default function HomeScreen() {
         await AsyncStorage.setItem('selectedAreaCityId', area.cityId);
       }
       
+      // エリア変更時はマイエリア登録をリセット
+      setIsMyArea(false);
+      await AsyncStorage.removeItem('isMyArea');
+      
       setSelectedAreaId(area.id);
       setSelectedAreaName(area.name);
       setAreaSchedule(area.schedule);
       setAreaModalVisible(false);
     } catch (error) {
       console.error('エリアの保存エラー:', error);
+    }
+  };
+
+  const toggleMyArea = async () => {
+    try {
+      const newIsMyArea = !isMyArea;
+      setIsMyArea(newIsMyArea);
+      await AsyncStorage.setItem('isMyArea', String(newIsMyArea));
+      
+      if (newIsMyArea) {
+        // マイエリアに登録
+        Alert.alert(
+          t('home.myAreaRegistered'),
+          t('home.myAreaRegisteredMessage'),
+          [{ text: 'OK' }]
+        );
+      } else {
+        // マイエリアから解除
+        Alert.alert(
+          t('home.myAreaRemoved'),
+          t('home.myAreaRemovedMessage'),
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('マイエリア登録エラー:', error);
     }
   };
 
@@ -402,7 +439,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{t('app.title')}</Text>
+          <Text style={styles.title}>{t('app.title')}</Text>
           </View>
           <TouchableOpacity
             style={styles.languageButton}
@@ -416,61 +453,76 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.locationContainer}>
-          <TouchableOpacity
+        <TouchableOpacity
             style={styles.locationButton}
-            onPress={changeLocation}
-          >
+          onPress={changeLocation}
+        >
             <Ionicons name="location-outline" size={18} color="#2089DC" />
             <Text style={styles.locationButtonText} numberOfLines={1}>
               {selectedPrefecture || t('home.selectPrefecture')}
-            </Text>
+          </Text>
             <Ionicons name="chevron-down" size={16} color="#999" />
-          </TouchableOpacity>
+        </TouchableOpacity>
 
-          <TouchableOpacity
+        <TouchableOpacity
             style={styles.locationButton}
-            onPress={() => selectedPrefectureId ? setCityModalVisible(true) : changeLocation()}
-          >
+          onPress={() => selectedPrefectureId ? setCityModalVisible(true) : changeLocation()}
+        >
             <Ionicons name="business-outline" size={18} color="#2089DC" />
             <Text style={styles.locationButtonText} numberOfLines={1}>
               {selectedCityName || t('home.selectCity')}
-            </Text>
+          </Text>
             <Ionicons name="chevron-down" size={16} color="#999" />
-          </TouchableOpacity>
+        </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={styles.areaSelectButton}
-          onPress={() => selectedCityId ? setAreaModalVisible(true) : (selectedPrefectureId ? setCityModalVisible(true) : changeLocation())}
-        >
-          <Ionicons name="home-outline" size={20} color="#FFFFFF" />
-          <Text style={styles.areaSelectButtonText} numberOfLines={1}>
-            {selectedAreaName || t('home.selectArea')}
-          </Text>
-          <Ionicons name="chevron-down" size={18} color="#FFFFFF" />
-        </TouchableOpacity>
+        <View style={styles.areaRow}>
+          <TouchableOpacity
+            style={styles.areaSelectButton}
+            onPress={() => selectedCityId ? setAreaModalVisible(true) : (selectedPrefectureId ? setCityModalVisible(true) : changeLocation())}
+          >
+            <Ionicons name="home-outline" size={20} color="#FFFFFF" />
+            <Text style={styles.areaSelectButtonText} numberOfLines={1}>
+              {selectedAreaName || t('home.selectArea')}
+            </Text>
+            <Ionicons name="chevron-down" size={18} color="#FFFFFF" />
+          </TouchableOpacity>
+          
+          {selectedAreaId && (
+            <TouchableOpacity
+              style={[styles.myAreaButton, isMyArea && styles.myAreaButtonActive]}
+              onPress={toggleMyArea}
+            >
+              <Ionicons 
+                name={isMyArea ? "star" : "star-outline"} 
+                size={22} 
+                color={isMyArea ? "#FFD700" : "#FFFFFF"} 
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <ScrollView style={styles.contentContainer} contentContainerStyle={{ paddingBottom: 20 }}>
-        {todaySchedule.length > 0 ? (
+      {todaySchedule.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Ionicons name="today-outline" size={22} color="#2089DC" />
-              <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
+          <Text style={styles.sectionTitle}>{t('home.todayCollection')}</Text>
             </View>
-            {todaySchedule.map((item, index) => (
-              <View
-                key={index}
-                style={[styles.card, { borderLeftColor: item.color }]}
-              >
+          {todaySchedule.map((item, index) => (
+            <View
+              key={index}
+              style={[styles.card, { borderLeftColor: item.color }]}
+            >
                 <View style={[styles.iconContainer, { backgroundColor: `${item.color}20` }]}>
                   <MaterialCommunityIcons name={item.icon} size={32} color={item.color} />
                 </View>
-                <Text style={styles.cardTitle}>{item.name}</Text>
-              </View>
-            ))}
-          </View>
-        ) : (
+              <Text style={styles.cardTitle}>{item.name}</Text>
+            </View>
+          ))}
+        </View>
+      ) : (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Ionicons name="today-outline" size={22} color="#95A5A6" />
@@ -480,38 +532,38 @@ export default function HomeScreen() {
               <MaterialCommunityIcons name="check-circle-outline" size={48} color="#E0E0E0" />
               <Text style={styles.noScheduleText}>{t('home.noCollection')}</Text>
             </View>
-          </View>
-        )}
+        </View>
+      )}
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Ionicons name="calendar-outline" size={22} color="#2089DC" />
-            <Text style={styles.sectionTitle}>{t('home.nextCollection')}</Text>
+        <Text style={styles.sectionTitle}>{t('home.nextCollection')}</Text>
           </View>
-          {getNextSchedule().map((item, index) => (
-            <View
-              key={index}
-              style={[styles.card, { borderLeftColor: item.color }]}
-            >
+        {getNextSchedule().map((item, index) => (
+          <View
+            key={index}
+            style={[styles.card, { borderLeftColor: item.color }]}
+          >
               <View style={[styles.iconContainer, { backgroundColor: `${item.color}20` }]}>
                 <MaterialCommunityIcons name={item.icon} size={28} color={item.color} />
               </View>
-              <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item.name}</Text>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>{item.name}</Text>
                 <View style={styles.dateBadge}>
                   <Ionicons name="time-outline" size={14} color="#7F8C8D" />
-                  <Text style={styles.cardSubtitle}>
-                    {item.daysUntil === 0
-                      ? t('home.today')
-                      : item.daysUntil === 1
-                      ? t('home.tomorrow')
-                      : t('home.daysLater', { days: item.daysUntil, dayName: getWeekdayName(item.date.getDay()) })}
-                  </Text>
+              <Text style={styles.cardSubtitle}>
+                {item.daysUntil === 0
+                  ? t('home.today')
+                  : item.daysUntil === 1
+                  ? t('home.tomorrow')
+                  : t('home.daysLater', { days: item.daysUntil, dayName: getWeekdayName(item.date.getDay()) })}
+              </Text>
                 </View>
-              </View>
             </View>
-          ))}
-        </View>
+          </View>
+        ))}
+      </View>
       </ScrollView>
 
       {/* 共通モーダルコンポーネント */}
@@ -520,36 +572,36 @@ export default function HomeScreen() {
         { visible: cityModalVisible, close: () => setCityModalVisible(false), title: t('home.selectCityTitle'), data: cities, onSelect: selectCity, searchVal: citySearchQuery, setSearch: setCitySearchQuery, placeholder: t('home.searchCity'), displayKey: 'name', noData: t('home.noCityData') },
         { visible: areaModalVisible, close: () => setAreaModalVisible(false), title: t('home.selectAreaTitle'), data: areas, onSelect: selectArea, searchVal: areaSearchQuery, setSearch: setAreaSearchQuery, placeholder: t('home.searchArea'), displayKey: 'name', noData: t('home.noAreaData'), showRequest: true }
       ].map((modal, idx) => (
-        <Modal
+      <Modal
           key={idx}
-          animationType="slide"
-          transparent={true}
+        animationType="slide"
+        transparent={true}
           visible={modal.visible}
           onRequestClose={modal.close}
-        >
+      >
           <TouchableWithoutFeedback onPress={modal.close}>
             <View style={styles.modalOverlay}>
-              <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
                 <View style={styles.modalContainer}>
                   <View style={styles.modalHeader}>
                     <Text style={styles.modalTitle}>{modal.title}</Text>
                     <TouchableOpacity onPress={modal.close} style={styles.closeIconButton}>
                       <Ionicons name="close" size={24} color="#555" />
-                    </TouchableOpacity>
-                  </View>
+                        </TouchableOpacity>
+              </View>
                   
                   <View style={styles.searchContainer}>
                     <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
-                    <TextInput
-                      style={styles.searchInput}
+                <TextInput
+                  style={styles.searchInput}
                       placeholder={modal.placeholder}
                       value={modal.searchVal}
                       onChangeText={modal.setSearch}
-                      autoCapitalize="none"
-                      autoCorrect={false}
+                  autoCapitalize="none"
+                  autoCorrect={false}
                       placeholderTextColor="#999"
                     />
-                  </View>
+              </View>
 
                   <ScrollView style={styles.modalList} contentContainerStyle={{ paddingBottom: 20 }}>
                     {modal.data.length === 0 ? (
@@ -557,48 +609,48 @@ export default function HomeScreen() {
                         <MaterialCommunityIcons name="file-search-outline" size={48} color="#E0E0E0" />
                         <Text style={styles.noDataText}>{modal.noData}</Text>
                       </View>
-                    ) : (
+                  ) : (
                       modal.data
                         .filter(item => 
                           item[modal.displayKey].toLowerCase().includes(modal.searchVal.toLowerCase())
-                        )
+                      )
                         .map((item, index) => (
-                          <TouchableOpacity
-                            key={index}
+                        <TouchableOpacity
+                          key={index}
                             style={styles.listItem}
-                            onPress={() => {
+                          onPress={() => {
                               modal.onSelect(item);
                               modal.setSearch('');
-                            }}
-                          >
+                          }}
+                        >
                             <Text style={styles.listItemText}>{item[modal.displayKey]}</Text>
                             <Ionicons name="chevron-forward" size={18} color="#DDD" />
-                          </TouchableOpacity>
-                        ))
-                    )}
+                        </TouchableOpacity>
+                      ))
+                  )}
                     
                     {modal.showRequest && (
-                      <View style={styles.requestAreaContainer}>
+                <View style={styles.requestAreaContainer}>
                         <View style={styles.requestHeader}>
                           <MaterialCommunityIcons name="map-plus" size={20} color="#2089DC" />
-                          <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
+                  <Text style={styles.requestAreaText}>{t('home.requestAreaAddition')}</Text>
                         </View>
                         <Text style={styles.requestAreaNote}>{t('home.requestAreaAdditionNote')}</Text>
-                        <TouchableOpacity
-                          style={styles.requestAreaButton}
-                          onPress={openRequestForm}
-                        >
-                          <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
+                  <TouchableOpacity
+                    style={styles.requestAreaButton}
+                    onPress={openRequestForm}
+                  >
+                    <Text style={styles.requestAreaButtonText}>{t('home.requestAreaButton')}</Text>
                           <Ionicons name="open-outline" size={16} color="#FFF" style={{ marginLeft: 4 }} />
-                        </TouchableOpacity>
-                      </View>
+                  </TouchableOpacity>
+                </View>
                     )}
                   </ScrollView>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
       ))}
 
       {/* 言語選択モーダル */}
@@ -613,32 +665,32 @@ export default function HomeScreen() {
             <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
               <View style={[styles.modalContainer, { height: 'auto', maxHeight: 300 }]}>
                 <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>{t('settings.selectLanguage')}</Text>
+            <Text style={styles.modalTitle}>{t('settings.selectLanguage')}</Text>
                   <TouchableOpacity onPress={() => setLanguageModalVisible(false)} style={styles.closeIconButton}>
                     <Ionicons name="close" size={24} color="#555" />
                   </TouchableOpacity>
                 </View>
                 <View style={{ padding: 20 }}>
-                  <TouchableOpacity
+            <TouchableOpacity
                     style={[styles.languageOption, i18n.language === 'ja' && styles.selectedLanguage]}
-                    onPress={() => changeLanguage('ja')}
-                  >
+              onPress={() => changeLanguage('ja')}
+            >
                     <Text style={[styles.languageOptionText, i18n.language === 'ja' && styles.selectedLanguageText]}>
                       {t('settings.japanese')}
                     </Text>
                     {i18n.language === 'ja' && <Ionicons name="checkmark" size={20} color="#2089DC" />}
-                  </TouchableOpacity>
-                  <TouchableOpacity
+            </TouchableOpacity>
+            <TouchableOpacity
                     style={[styles.languageOption, i18n.language === 'en' && styles.selectedLanguage]}
-                    onPress={() => changeLanguage('en')}
-                  >
+              onPress={() => changeLanguage('en')}
+            >
                     <Text style={[styles.languageOptionText, i18n.language === 'en' && styles.selectedLanguageText]}>
                       {t('settings.english')}
                     </Text>
                     {i18n.language === 'en' && <Ionicons name="checkmark" size={20} color="#2089DC" />}
-                  </TouchableOpacity>
-                </View>
-              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
             </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
@@ -725,7 +777,12 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     marginRight: 6,
   },
+  areaRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   areaSelectButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#2089DC',
@@ -737,6 +794,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 4,
+  },
+  myAreaButton: {
+    width: 52,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#7F8C8D',
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  myAreaButtonActive: {
+    backgroundColor: '#2089DC',
   },
   areaSelectButtonText: {
     flex: 1,

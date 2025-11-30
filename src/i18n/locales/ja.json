@@ -31,7 +31,11 @@
     "requestAreaButton": "📝 地域追加をリクエスト",
     "searchPrefecture": "都道府県を検索...",
     "searchCity": "市区町村を検索...",
-    "searchArea": "エリアを検索..."
+    "searchArea": "エリアを検索...",
+    "myAreaRegistered": "マイエリアに登録しました",
+    "myAreaRegisteredMessage": "このエリアをマイエリアとして登録しました",
+    "myAreaRemoved": "マイエリアを解除しました",
+    "myAreaRemovedMessage": "マイエリアの登録を解除しました"
   },
   "calendar": {
     "selectAreaPrompt": "ホーム画面でエリアを選択してください",

@@ -45,7 +45,7 @@
                   "resources": [6, 13, 20, 27],
                   "cans_bottles_pet": [8, 22]
                 }
-              },
+                },
               "jurisdiction": "東"
             }
           ]

@@ -31,12 +31,14 @@ const getTodayString = () => new Date().toISOString().split('T')[0];
 export default function CalendarScreen() {
   const { t, i18n } = useTranslation();
   const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [selectedAreaName, setSelectedAreaName] = useState(null);
   const [selectedCityId, setSelectedCityId] = useState(null);
   const [selectedPrefectureId, setSelectedPrefectureId] = useState(null);
   const [areaSchedule, setAreaSchedule] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(getTodayString());
   const [loading, setLoading] = useState(true);
+  const [isMyArea, setIsMyArea] = useState(false);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -63,13 +65,17 @@ export default function CalendarScreen() {
     try {
       setLoading(true);
       const areaId = await AsyncStorage.getItem('selectedAreaId');
+      const areaName = await AsyncStorage.getItem('selectedAreaName');
       const cityId = await AsyncStorage.getItem('selectedCityId');
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
+      const savedIsMyArea = await AsyncStorage.getItem('isMyArea');
       
       if (areaId && cityId && prefectureId) {
         setSelectedAreaId(areaId);
+        setSelectedAreaName(areaName);
         setSelectedCityId(cityId);
         setSelectedPrefectureId(prefectureId);
+        setIsMyArea(savedIsMyArea === 'true');
         setSelectedDate(todayString);
         
         const schedule = await fetchAreaSchedule(prefectureId, cityId, areaId);
@@ -165,29 +171,36 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-        {!selectedAreaId ? (
-          <View style={styles.noAreaContainer}>
+      {!selectedAreaId ? (
+        <View style={styles.noAreaContainer}>
             <MaterialCommunityIcons name="map-marker-off-outline" size={64} color="#E0E0E0" />
-            <Text style={styles.noAreaText}>
-              {t('calendar.selectAreaPrompt')}
-            </Text>
-          </View>
-        ) : (
-          <>
+          <Text style={styles.noAreaText}>
+            {t('calendar.selectAreaPrompt')}
+          </Text>
+        </View>
+      ) : (
+        <>
+          {selectedAreaName && (
+            <View style={[styles.myAreaBanner, !isMyArea && styles.normalAreaBanner]}>
+              {isMyArea && <Ionicons name="star" size={20} color="#FFD700" />}
+              <Text style={styles.myAreaBannerText}>{selectedAreaName}</Text>
+            </View>
+          )}
+        
             <View style={styles.calendarCard}>
-              <Calendar
-                markedDates={{
-                  ...markedDates,
+            <Calendar
+              markedDates={{
+                ...markedDates,
                   [selectedDate]: {
                     ...(markedDates[selectedDate] || {}),
                     selected: true,
                     selectedColor: '#2089DC',
                     selectedTextColor: '#ffffff',
                   },
-                }}
-                onDayPress={onDayPress}
-                monthFormat={i18n.language === 'ja' ? 'yyyy年 MM月' : 'MMMM yyyy'}
-                theme={{
+              }}
+              onDayPress={onDayPress}
+              monthFormat={i18n.language === 'ja' ? 'yyyy年 MM月' : 'MMMM yyyy'}
+              theme={{
                   backgroundColor: '#ffffff',
                   calendarBackground: '#ffffff',
                   textSectionTitleColor: '#b6c1cd',
@@ -202,24 +215,24 @@ export default function CalendarScreen() {
                   monthTextColor: '#2C3E50',
                   indicatorColor: 'blue',
                   textDayFontWeight: '500',
-                  textMonthFontWeight: 'bold',
+                textMonthFontWeight: 'bold',
                   textDayHeaderFontWeight: '500',
                   textDayFontSize: 16,
-                  textMonthFontSize: 18,
+                textMonthFontSize: 18,
                   textDayHeaderFontSize: 13
-                }}
-                markingType={'multi-dot'}
-                enableSwipeMonths={true}
+              }}
+              markingType={'multi-dot'}
+              enableSwipeMonths={true}
                 current={selectedDate}
-              />
-            </View>
+            />
+          </View>
 
             <View style={styles.scheduleSection}>
               <View style={styles.sectionHeader}>
                 <Ionicons name="calendar" size={20} color="#2089DC" />
                 <Text style={styles.sectionTitle}>
-                  {t('calendar.collectionSchedule', { date: selectedDate })}
-                </Text>
+                {t('calendar.collectionSchedule', { date: selectedDate })}
+              </Text>
               </View>
 
               {getGarbageForDate(selectedDate).length > 0 ? (
@@ -241,27 +254,27 @@ export default function CalendarScreen() {
               )}
             </View>
 
-            <View style={styles.legendContainer}>
-              <Text style={styles.legendTitle}>{t('calendar.legend')}</Text>
-              <View style={styles.legendGrid}>
-                {Object.keys(categoryConfig).map((key, index) => (
-                  <View key={index} style={styles.legendItem}>
-                    <View
-                      style={[
-                        styles.legendDot,
-                        { backgroundColor: categoryConfig[key].color },
-                      ]}
-                    />
-                    <Text style={styles.legendText}>
-                      {categoryConfig[key].name}
-                    </Text>
-                  </View>
-                ))}
-              </View>
+          <View style={styles.legendContainer}>
+            <Text style={styles.legendTitle}>{t('calendar.legend')}</Text>
+            <View style={styles.legendGrid}>
+              {Object.keys(categoryConfig).map((key, index) => (
+                <View key={index} style={styles.legendItem}>
+                  <View
+                    style={[
+                      styles.legendDot,
+                      { backgroundColor: categoryConfig[key].color },
+                    ]}
+                  />
+                  <Text style={styles.legendText}>
+                    {categoryConfig[key].name}
+                  </Text>
+                </View>
+              ))}
             </View>
-          </>
-        )}
-      </ScrollView>
+          </View>
+        </>
+      )}
+    </ScrollView>
     </SafeAreaView>
   );
 }
@@ -294,6 +307,32 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16,
     lineHeight: 24,
+  },
+  myAreaBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2089DC',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    borderRadius: 12,
+    shadowColor: '#2089DC',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  myAreaBannerText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginLeft: 8,
+  },
+  normalAreaBanner: {
+    backgroundColor: '#7F8C8D',
   },
   calendarCard: {
     margin: 16,

@@ -58,7 +58,7 @@ export const fetchCities = async (municipalityId) => {
       if (!citiesMap.has(name)) {
         citiesMap.set(name, {
           ids: [doc.id], // 複数のIDを配列で保持
-          name: name,
+        name: name,
           type: data.type || 'city'
         });
       } else {
@@ -102,19 +102,19 @@ export const fetchAreas = async (municipalityId, cityId) => {
       );
 
       const areas = areasSnapshot.docs.map(doc => {
-        const data = doc.data();
-        // 多言語対応: 現在の言語に応じたフィールドを使用、なければ日本語
-        const name = currentLang === 'ja' 
-          ? (data.name || data.name_ja)
-          : (data[`name_${currentLang}`] || data.name_ja || data.name);
-        
-        return {
-          id: doc.id,
+      const data = doc.data();
+      // 多言語対応: 現在の言語に応じたフィールドを使用、なければ日本語
+      const name = currentLang === 'ja' 
+        ? (data.name || data.name_ja)
+        : (data[`name_${currentLang}`] || data.name_ja || data.name);
+      
+      return {
+        id: doc.id,
           cityId: id, // どのcityIdから取得したかを保持
-          name: name,
-          schedule: normalizeSchedule(data.schedule)
-        };
-      });
+        name: name,
+        schedule: normalizeSchedule(data.schedule)
+      };
+    });
 
       allAreas = allAreas.concat(areas);
     }

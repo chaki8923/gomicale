@@ -31,7 +31,11 @@
     "requestAreaButton": "📝 Request Area Addition",
     "searchPrefecture": "Search prefecture...",
     "searchCity": "Search city...",
-    "searchArea": "Search area..."
+    "searchArea": "Search area...",
+    "myAreaRegistered": "Registered as My Area",
+    "myAreaRegisteredMessage": "This area has been registered as your My Area",
+    "myAreaRemoved": "My Area Removed",
+    "myAreaRemovedMessage": "My Area registration has been removed"
   },
   "calendar": {
     "selectAreaPrompt": "Please select an area from the home screen",

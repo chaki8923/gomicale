@@ -27,6 +27,8 @@ export default function SearchScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [garbageClassification, setGarbageClassification] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAreaName, setSelectedAreaName] = useState(null);
+  const [isMyArea, setIsMyArea] = useState(false);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -40,9 +42,14 @@ export default function SearchScreen() {
       setLoading(true);
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       const areaId = await AsyncStorage.getItem('selectedAreaId');
+      const areaName = await AsyncStorage.getItem('selectedAreaName');
+      const savedIsMyArea = await AsyncStorage.getItem('isMyArea');
       // エリアが所属する実際のcityIdを取得
       const areaCityId = await AsyncStorage.getItem('selectedAreaCityId');
       const cityId = await AsyncStorage.getItem('selectedCityId');
+      
+      setSelectedAreaName(areaName);
+      setIsMyArea(savedIsMyArea === 'true');
       
       if (prefectureId && areaId && (areaCityId || cityId)) {
         // areaCityIdがあればそれを使用、なければcityIdを使用
@@ -118,15 +125,21 @@ export default function SearchScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.searchContainer}>
+        {selectedAreaName && (
+          <View style={[styles.myAreaBanner, !isMyArea && styles.normalAreaBanner]}>
+            {isMyArea && <Ionicons name="star" size={18} color="#FFD700" />}
+            <Text style={styles.myAreaBannerText}>{selectedAreaName}</Text>
+          </View>
+        )}
+      <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder={t('search.placeholder')}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoCapitalize="none"
-            autoCorrect={false}
+        <TextInput
+          style={styles.searchInput}
+          placeholder={t('search.placeholder')}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          autoCapitalize="none"
+          autoCorrect={false}
             placeholderTextColor="#999"
           />
           {searchQuery.length > 0 && (
@@ -173,7 +186,7 @@ export default function SearchScreen() {
                 <View style={styles.modalContainer}>
                   <View style={styles.modalHeader}>
                     <View style={styles.modalTitleContainer}>
-                      <Text style={styles.modalTitle}>{selectedItem.name}</Text>
+                    <Text style={styles.modalTitle}>{selectedItem.name}</Text>
                     </View>
                     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
                       <Ionicons name="close" size={24} color="#555" />
@@ -206,7 +219,7 @@ export default function SearchScreen() {
                       <View style={styles.section}>
                         <View style={styles.sectionHeader}>
                           <Ionicons name="information-circle-outline" size={20} color="#555" />
-                          <Text style={styles.sectionTitle}>{t('search.howToDispose')}</Text>
+                        <Text style={styles.sectionTitle}>{t('search.howToDispose')}</Text>
                         </View>
                         <Text style={styles.sectionText}>
                           {selectedItem.description}
@@ -214,19 +227,19 @@ export default function SearchScreen() {
                       </View>
 
                       {selectedItem.examples && selectedItem.examples.length > 0 && (
-                        <View style={styles.section}>
+                      <View style={styles.section}>
                           <View style={styles.sectionHeader}>
                             <Ionicons name="list-outline" size={20} color="#555" />
-                            <Text style={styles.sectionTitle}>{t('search.examples')}</Text>
+                        <Text style={styles.sectionTitle}>{t('search.examples')}</Text>
                           </View>
                           <View style={styles.examplesContainer}>
-                            {selectedItem.examples.map((example, index) => (
+                        {selectedItem.examples.map((example, index) => (
                               <View key={index} style={styles.exampleItem}>
                                 <View style={styles.bullet} />
                                 <Text style={styles.exampleText}>{example}</Text>
                               </View>
-                            ))}
-                          </View>
+                        ))}
+                      </View>
                         </View>
                       )}
                     </View>
@@ -268,6 +281,25 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     zIndex: 10,
+  },
+  myAreaBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2089DC',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 10,
+  },
+  myAreaBannerText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginLeft: 6,
+  },
+  normalAreaBanner: {
+    backgroundColor: '#7F8C8D',
   },
   searchContainer: {
     flexDirection: 'row',

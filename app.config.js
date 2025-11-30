@@ -7,15 +7,26 @@ export default {
     version: "1.0.0",
     orientation: "portrait",
     userInterfaceStyle: "light",
+    icon: "./assets/icon.png",
+    splash: {
+      image: "./assets/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff"
+    },
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.gomikare.app"
     },
     android: {
-      package: "com.gomikare.app"
+      package: "com.gomikare.app",
+      adaptiveIcon: {
+        foregroundImage: "./assets/adaptive-icon.png",
+        backgroundColor: "#ffffff"
+      }
     },
     plugins: [
-      "expo-font"
+      "expo-font",
+      "expo-asset"
     ],
     extra: {
       firebaseApiKey: process.env.FIREBASE_API_KEY,
