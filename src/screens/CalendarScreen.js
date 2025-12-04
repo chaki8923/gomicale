@@ -67,10 +67,11 @@ export default function CalendarScreen() {
       const areaId = await AsyncStorage.getItem('selectedAreaId');
       const areaName = await AsyncStorage.getItem('selectedAreaName');
       const cityId = await AsyncStorage.getItem('selectedCityId');
+      const areaCityId = await AsyncStorage.getItem('selectedAreaCityId');
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       const savedIsMyArea = await AsyncStorage.getItem('isMyArea');
       
-      if (areaId && cityId && prefectureId) {
+      if (areaId && (areaCityId || cityId) && prefectureId) {
         setSelectedAreaId(areaId);
         setSelectedAreaName(areaName);
         setSelectedCityId(cityId);
@@ -78,7 +79,8 @@ export default function CalendarScreen() {
         setIsMyArea(savedIsMyArea === 'true');
         setSelectedDate(todayString);
         
-        const schedule = await fetchAreaSchedule(prefectureId, cityId, areaId);
+        // areaCityIdがあればそれを使用、なければcityIdを使用
+        const schedule = await fetchAreaSchedule(prefectureId, areaCityId || cityId, areaId);
         setAreaSchedule(schedule.schedule);
       }
     } catch (error) {
