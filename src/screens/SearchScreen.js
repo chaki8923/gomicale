@@ -29,6 +29,8 @@ export default function SearchScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedAreaName, setSelectedAreaName] = useState(null);
   const [isMyArea, setIsMyArea] = useState(false);
+  const [myAreaInfo, setMyAreaInfo] = useState(null);
+  const [showMyAreaButton, setShowMyAreaButton] = useState(false);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -48,8 +50,20 @@ export default function SearchScreen() {
       const areaCityId = await AsyncStorage.getItem('selectedAreaCityId');
       const cityId = await AsyncStorage.getItem('selectedCityId');
       
+      // マイエリア情報を読み込み
+      const myAreaInfoStr = await AsyncStorage.getItem('myAreaInfo');
+      const savedMyAreaInfo = myAreaInfoStr ? JSON.parse(myAreaInfoStr) : null;
+      setMyAreaInfo(savedMyAreaInfo);
+      
       setSelectedAreaName(areaName);
       setIsMyArea(savedIsMyArea === 'true');
+      
+      // マイエリアが登録されていて、かつ現在別のエリアを見ている場合、ボタンを表示
+      if (savedMyAreaInfo && areaId !== savedMyAreaInfo.areaId) {
+        setShowMyAreaButton(true);
+      } else {
+        setShowMyAreaButton(false);
+      }
       
       if (prefectureId && areaId && (areaCityId || cityId)) {
         // areaCityIdがあればそれを使用、なければcityIdを使用
@@ -63,6 +77,25 @@ export default function SearchScreen() {
       console.error('ごみ分別データの読み込みエラー:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const returnToMyArea = async () => {
+    if (!myAreaInfo) return;
+    
+    try {
+      // マイエリア情報をAsyncStorageに設定
+      await AsyncStorage.setItem('selectedPrefectureId', myAreaInfo.prefectureId);
+      await AsyncStorage.setItem('selectedCityId', myAreaInfo.cityId);
+      await AsyncStorage.setItem('selectedCityName', myAreaInfo.cityName);
+      await AsyncStorage.setItem('selectedAreaId', myAreaInfo.areaId);
+      await AsyncStorage.setItem('selectedAreaName', myAreaInfo.areaName);
+      await AsyncStorage.setItem('isMyArea', 'true');
+      
+      // データを再読み込み
+      await loadGarbageClassification();
+    } catch (error) {
+      console.error('マイエリアへ戻るエラー:', error);
     }
   };
 
@@ -126,9 +159,20 @@ export default function SearchScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         {selectedAreaName && (
-          <View style={[styles.myAreaBanner, !isMyArea && styles.normalAreaBanner]}>
-            {isMyArea && <Ionicons name="star" size={18} color="#FFD700" />}
-            <Text style={styles.myAreaBannerText}>{selectedAreaName}</Text>
+          <View style={styles.areaHeaderRow}>
+            <View style={[styles.myAreaBanner, !isMyArea && styles.normalAreaBanner]}>
+              {isMyArea && <Ionicons name="star" size={18} color="#FFD700" />}
+              <Text style={styles.myAreaBannerText}>{selectedAreaName}</Text>
+            </View>
+            {showMyAreaButton && myAreaInfo && (
+              <TouchableOpacity
+                style={styles.returnToMyAreaButton}
+                onPress={returnToMyArea}
+              >
+                <Ionicons name="star" size={16} color="#FFD700" />
+                <Text style={styles.returnToMyAreaText}>{t('home.returnToMyArea')}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       <View style={styles.searchContainer}>
@@ -282,14 +326,20 @@ const styles = StyleSheet.create({
     elevation: 4,
     zIndex: 10,
   },
+  areaHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
   myAreaBanner: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2089DC',
     paddingVertical: 10,
     paddingHorizontal: 16,
-    marginBottom: 12,
     borderRadius: 10,
   },
   myAreaBannerText: {
@@ -300,6 +350,25 @@ const styles = StyleSheet.create({
   },
   normalAreaBanner: {
     backgroundColor: '#7F8C8D',
+  },
+  returnToMyAreaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2089DC',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    shadowColor: '#2089DC',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  returnToMyAreaText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    marginLeft: 4,
   },
   searchContainer: {
     flexDirection: 'row',

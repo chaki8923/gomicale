@@ -35,7 +35,8 @@
     "myAreaRegistered": "マイエリアに登録しました",
     "myAreaRegisteredMessage": "このエリアをマイエリアとして登録しました",
     "myAreaRemoved": "マイエリアを解除しました",
-    "myAreaRemovedMessage": "マイエリアの登録を解除しました"
+    "myAreaRemovedMessage": "マイエリアの登録を解除しました",
+    "returnToMyArea": "マイエリアへ"
   },
   "calendar": {
     "selectAreaPrompt": "ホーム画面でエリアを選択してください",

@@ -54,6 +54,8 @@ export default function HomeScreen() {
   const [citySearchQuery, setCitySearchQuery] = useState('');
   const [areaSearchQuery, setAreaSearchQuery] = useState('');
   const [isMyArea, setIsMyArea] = useState(false);
+  const [myAreaInfo, setMyAreaInfo] = useState(null);
+  const [showMyAreaButton, setShowMyAreaButton] = useState(false);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -95,6 +97,11 @@ export default function HomeScreen() {
       const sortedPrefectures = sortPrefectures(prefecturesList);
       setPrefectures(sortedPrefectures);
 
+      // マイエリア情報を読み込み
+      const myAreaInfoStr = await AsyncStorage.getItem('myAreaInfo');
+      const savedMyAreaInfo = myAreaInfoStr ? JSON.parse(myAreaInfoStr) : null;
+      setMyAreaInfo(savedMyAreaInfo);
+
       // 保存されている都道府県ID、市区町村ID、エリアIDを読み込み
       const savedPrefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       const savedCityId = await AsyncStorage.getItem('selectedCityId');
@@ -103,6 +110,13 @@ export default function HomeScreen() {
       const savedAreaName = await AsyncStorage.getItem('selectedAreaName');
       const savedIsMyArea = await AsyncStorage.getItem('isMyArea');
       setIsMyArea(savedIsMyArea === 'true');
+
+      // マイエリアが登録されていて、かつ現在別のエリアを見ている場合、ボタンを表示
+      if (savedMyAreaInfo && savedAreaId !== savedMyAreaInfo.areaId) {
+        setShowMyAreaButton(true);
+      } else {
+        setShowMyAreaButton(false);
+      }
 
       if (savedPrefectureId && prefecturesList.length > 0) {
         const prefecture = prefecturesList.find(p => p.id === savedPrefectureId);
@@ -202,6 +216,11 @@ export default function HomeScreen() {
       await AsyncStorage.removeItem('selectedAreaName');
       await AsyncStorage.removeItem('isMyArea');
       
+      // マイエリアボタンの表示状態を更新
+      if (myAreaInfo && myAreaInfo.areaId) {
+        setShowMyAreaButton(true);
+      }
+      
       await loadPrefectureData(prefecture.id);
       setPrefectureModalVisible(false);
       setCityModalVisible(true);
@@ -229,6 +248,11 @@ export default function HomeScreen() {
       await AsyncStorage.removeItem('selectedAreaName');
       await AsyncStorage.removeItem('isMyArea');
       
+      // マイエリアボタンの表示状態を更新
+      if (myAreaInfo && myAreaInfo.areaId) {
+        setShowMyAreaButton(true);
+      }
+      
       // cityオブジェクト全体を渡す（idsプロパティを含む）
       await loadCityData(selectedPrefectureId, city);
       setCityModalVisible(false);
@@ -253,6 +277,13 @@ export default function HomeScreen() {
       setIsMyArea(false);
       await AsyncStorage.removeItem('isMyArea');
       
+      // マイエリアボタンの表示状態を更新
+      if (myAreaInfo && myAreaInfo.areaId !== area.id) {
+        setShowMyAreaButton(true);
+      } else {
+        setShowMyAreaButton(false);
+      }
+      
       setSelectedAreaId(area.id);
       setSelectedAreaName(area.name);
       setAreaSchedule(area.schedule);
@@ -269,6 +300,19 @@ export default function HomeScreen() {
       await AsyncStorage.setItem('isMyArea', String(newIsMyArea));
       
       if (newIsMyArea) {
+        // マイエリア情報を保存
+        const myAreaData = {
+          prefectureId: selectedPrefectureId,
+          prefecture: selectedPrefecture,
+          cityId: selectedCityId,
+          cityName: selectedCityName,
+          areaId: selectedAreaId,
+          areaName: selectedAreaName,
+        };
+        await AsyncStorage.setItem('myAreaInfo', JSON.stringify(myAreaData));
+        setMyAreaInfo(myAreaData);
+        setShowMyAreaButton(false);
+        
         // マイエリアに登録
         Alert.alert(
           t('home.myAreaRegistered'),
@@ -277,6 +321,10 @@ export default function HomeScreen() {
         );
       } else {
         // マイエリアから解除
+        await AsyncStorage.removeItem('myAreaInfo');
+        setMyAreaInfo(null);
+        setShowMyAreaButton(false);
+        
         Alert.alert(
           t('home.myAreaRemoved'),
           t('home.myAreaRemovedMessage'),
@@ -290,6 +338,35 @@ export default function HomeScreen() {
 
   const changeLocation = () => {
     setPrefectureModalVisible(true);
+  };
+
+  const returnToMyArea = async () => {
+    if (!myAreaInfo) return;
+    
+    try {
+      // マイエリア情報を現在の選択に設定
+      setSelectedPrefectureId(myAreaInfo.prefectureId);
+      setSelectedPrefecture(myAreaInfo.prefecture);
+      setSelectedCityId(myAreaInfo.cityId);
+      setSelectedCityName(myAreaInfo.cityName);
+      setSelectedAreaId(myAreaInfo.areaId);
+      setSelectedAreaName(myAreaInfo.areaName);
+      setIsMyArea(true);
+      setShowMyAreaButton(false);
+      
+      // AsyncStorageも更新
+      await AsyncStorage.setItem('selectedPrefectureId', myAreaInfo.prefectureId);
+      await AsyncStorage.setItem('selectedCityId', myAreaInfo.cityId);
+      await AsyncStorage.setItem('selectedCityName', myAreaInfo.cityName);
+      await AsyncStorage.setItem('selectedAreaId', myAreaInfo.areaId);
+      await AsyncStorage.setItem('selectedAreaName', myAreaInfo.areaName);
+      await AsyncStorage.setItem('isMyArea', 'true');
+      
+      // データを再読み込み
+      await loadData();
+    } catch (error) {
+      console.error('マイエリアへ戻るエラー:', error);
+    }
   };
 
   const changeLanguage = async (lang) => {
@@ -441,15 +518,26 @@ export default function HomeScreen() {
           <View style={styles.titleContainer}>
           <Text style={styles.title}>{t('app.title')}</Text>
           </View>
-          <TouchableOpacity
-            style={styles.languageButton}
-            onPress={() => setLanguageModalVisible(true)}
-          >
-            <Ionicons name="globe-outline" size={20} color="#555" />
-            <Text style={styles.languageButtonText}>
-              {i18n.language.toUpperCase()}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            {showMyAreaButton && myAreaInfo && (
+              <TouchableOpacity
+                style={styles.returnToMyAreaButton}
+                onPress={returnToMyArea}
+              >
+                <Ionicons name="star" size={18} color="#FFD700" />
+                <Text style={styles.returnToMyAreaText}>{t('home.returnToMyArea')}</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.languageButton}
+              onPress={() => setLanguageModalVisible(true)}
+            >
+              <Ionicons name="globe-outline" size={20} color="#555" />
+              <Text style={styles.languageButtonText}>
+                {i18n.language.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.locationContainer}>
@@ -740,6 +828,30 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#2C3E50',
     letterSpacing: 0.5,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  returnToMyAreaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2089DC',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: '#2089DC',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  returnToMyAreaText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    marginLeft: 4,
   },
   languageButton: {
     flexDirection: 'row',

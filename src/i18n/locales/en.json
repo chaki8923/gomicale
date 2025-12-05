@@ -35,7 +35,8 @@
     "myAreaRegistered": "Registered as My Area",
     "myAreaRegisteredMessage": "This area has been registered as your My Area",
     "myAreaRemoved": "My Area Removed",
-    "myAreaRemovedMessage": "My Area registration has been removed"
+    "myAreaRemovedMessage": "My Area registration has been removed",
+    "returnToMyArea": "My Area"
   },
   "calendar": {
     "selectAreaPrompt": "Please select an area from the home screen",

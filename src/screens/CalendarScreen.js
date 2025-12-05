@@ -39,6 +39,8 @@ export default function CalendarScreen() {
   const [selectedDate, setSelectedDate] = useState(getTodayString());
   const [loading, setLoading] = useState(true);
   const [isMyArea, setIsMyArea] = useState(false);
+  const [myAreaInfo, setMyAreaInfo] = useState(null);
+  const [showMyAreaButton, setShowMyAreaButton] = useState(false);
 
   // 画面にフォーカスが当たるたびにデータを再読み込み
   useFocusEffect(
@@ -71,6 +73,11 @@ export default function CalendarScreen() {
       const prefectureId = await AsyncStorage.getItem('selectedPrefectureId');
       const savedIsMyArea = await AsyncStorage.getItem('isMyArea');
       
+      // マイエリア情報を読み込み
+      const myAreaInfoStr = await AsyncStorage.getItem('myAreaInfo');
+      const savedMyAreaInfo = myAreaInfoStr ? JSON.parse(myAreaInfoStr) : null;
+      setMyAreaInfo(savedMyAreaInfo);
+      
       if (areaId && (areaCityId || cityId) && prefectureId) {
         setSelectedAreaId(areaId);
         setSelectedAreaName(areaName);
@@ -78,6 +85,13 @@ export default function CalendarScreen() {
         setSelectedPrefectureId(prefectureId);
         setIsMyArea(savedIsMyArea === 'true');
         setSelectedDate(todayString);
+        
+        // マイエリアが登録されていて、かつ現在別のエリアを見ている場合、ボタンを表示
+        if (savedMyAreaInfo && areaId !== savedMyAreaInfo.areaId) {
+          setShowMyAreaButton(true);
+        } else {
+          setShowMyAreaButton(false);
+        }
         
         // areaCityIdがあればそれを使用、なければcityIdを使用
         const schedule = await fetchAreaSchedule(prefectureId, areaCityId || cityId, areaId);
@@ -148,6 +162,25 @@ export default function CalendarScreen() {
     }
   };
 
+  const returnToMyArea = async () => {
+    if (!myAreaInfo) return;
+    
+    try {
+      // マイエリア情報をAsyncStorageに設定
+      await AsyncStorage.setItem('selectedPrefectureId', myAreaInfo.prefectureId);
+      await AsyncStorage.setItem('selectedCityId', myAreaInfo.cityId);
+      await AsyncStorage.setItem('selectedCityName', myAreaInfo.cityName);
+      await AsyncStorage.setItem('selectedAreaId', myAreaInfo.areaId);
+      await AsyncStorage.setItem('selectedAreaName', myAreaInfo.areaName);
+      await AsyncStorage.setItem('isMyArea', 'true');
+      
+      // データを再読み込み
+      await loadSelectedArea();
+    } catch (error) {
+      console.error('マイエリアへ戻るエラー:', error);
+    }
+  };
+
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
   };
@@ -183,9 +216,20 @@ export default function CalendarScreen() {
       ) : (
         <>
           {selectedAreaName && (
-            <View style={[styles.myAreaBanner, !isMyArea && styles.normalAreaBanner]}>
-              {isMyArea && <Ionicons name="star" size={20} color="#FFD700" />}
-              <Text style={styles.myAreaBannerText}>{selectedAreaName}</Text>
+            <View style={styles.areaHeaderRow}>
+              <View style={[styles.myAreaBanner, !isMyArea && styles.normalAreaBanner]}>
+                {isMyArea && <Ionicons name="star" size={20} color="#FFD700" />}
+                <Text style={styles.myAreaBannerText}>{selectedAreaName}</Text>
+              </View>
+              {showMyAreaButton && myAreaInfo && (
+                <TouchableOpacity
+                  style={styles.returnToMyAreaButton}
+                  onPress={returnToMyArea}
+                >
+                  <Ionicons name="star" size={18} color="#FFD700" />
+                  <Text style={styles.returnToMyAreaText}>{t('home.returnToMyArea')}</Text>
+                </TouchableOpacity>
+              )}
             </View>
           )}
         
@@ -310,16 +354,22 @@ const styles = StyleSheet.create({
     marginTop: 16,
     lineHeight: 24,
   },
+  areaHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    gap: 8,
+  },
   myAreaBanner: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2089DC',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 8,
     borderRadius: 12,
     shadowColor: '#2089DC',
     shadowOffset: { width: 0, height: 2 },
@@ -335,6 +385,25 @@ const styles = StyleSheet.create({
   },
   normalAreaBanner: {
     backgroundColor: '#7F8C8D',
+  },
+  returnToMyAreaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2089DC',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 12,
+    shadowColor: '#2089DC',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  returnToMyAreaText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    marginLeft: 4,
   },
   calendarCard: {
     margin: 16,
