@@ -216,4 +216,44 @@ export const categoryConfig = {
     icon: 'glass-fragile',
     iconType: 'MaterialCommunityIcons',
   },
+  paper: {
+    get name() {
+      return i18n.t('categories.paper');
+    },
+    color: '#E8A0BF',
+    icon: 'newspaper-variant-outline',
+    iconType: 'MaterialCommunityIcons',
+  },
+  cloth: {
+    get name() {
+      return i18n.t('categories.cloth');
+    },
+    color: '#BA94D1',
+    icon: 'tshirt-crew-outline',
+    iconType: 'MaterialCommunityIcons',
+  },
+  harmful: {
+    get name() {
+      return i18n.t('categories.harmful');
+    },
+    color: '#FF6B6B',
+    icon: 'skull-crossbones-outline',
+    iconType: 'MaterialCommunityIcons',
+  },
+  small_electronics: {
+    get name() {
+      return i18n.t('categories.small_electronics');
+    },
+    color: '#52B788',
+    icon: 'battery-outline',
+    iconType: 'MaterialCommunityIcons',
+  },
+  pruned_branches: {
+    get name() {
+      return i18n.t('categories.pruned_branches');
+    },
+    color: '#8B5A2B',
+    icon: 'tree-outline',
+    iconType: 'MaterialCommunityIcons',
+  },
 };

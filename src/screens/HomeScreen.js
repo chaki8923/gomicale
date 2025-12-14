@@ -300,6 +300,9 @@ export default function HomeScreen() {
       await AsyncStorage.setItem('isMyArea', String(newIsMyArea));
       
       if (newIsMyArea) {
+        // areaCityIdを取得（エリアが実際に所属するcityId）
+        const areaCityId = await AsyncStorage.getItem('selectedAreaCityId');
+        
         // マイエリア情報を保存
         const myAreaData = {
           prefectureId: selectedPrefectureId,
@@ -308,6 +311,7 @@ export default function HomeScreen() {
           cityName: selectedCityName,
           areaId: selectedAreaId,
           areaName: selectedAreaName,
+          areaCityId: areaCityId, // エリアが所属する実際のcityIdを追加
         };
         await AsyncStorage.setItem('myAreaInfo', JSON.stringify(myAreaData));
         setMyAreaInfo(myAreaData);
@@ -361,6 +365,10 @@ export default function HomeScreen() {
       await AsyncStorage.setItem('selectedAreaId', myAreaInfo.areaId);
       await AsyncStorage.setItem('selectedAreaName', myAreaInfo.areaName);
       await AsyncStorage.setItem('isMyArea', 'true');
+      // areaCityIdも更新（エリアが所属する実際のcityId）
+      if (myAreaInfo.areaCityId) {
+        await AsyncStorage.setItem('selectedAreaCityId', myAreaInfo.areaCityId);
+      }
       
       // データを再読み込み
       await loadData();
@@ -429,6 +437,8 @@ export default function HomeScreen() {
                 category,
                 ...categoryConfig[category],
               });
+            } else {
+              console.warn(`カテゴリーが見つかりません: ${category}`);
             }
           }
         });

@@ -173,6 +173,10 @@ export default function CalendarScreen() {
       await AsyncStorage.setItem('selectedAreaId', myAreaInfo.areaId);
       await AsyncStorage.setItem('selectedAreaName', myAreaInfo.areaName);
       await AsyncStorage.setItem('isMyArea', 'true');
+      // areaCityIdも更新（エリアが所属する実際のcityId）
+      if (myAreaInfo.areaCityId) {
+        await AsyncStorage.setItem('selectedAreaCityId', myAreaInfo.areaCityId);
+      }
       
       // データを再読み込み
       await loadSelectedArea();

@@ -67,7 +67,12 @@
     "cooking_oil": "Cooking Oil",
     "bottles_and_cans": "Bottles, Cans & Small Appliances",
     "resources": "Resources",
-    "metal_pottery_glass": "Metal, Pottery & Glass"
+    "metal_pottery_glass": "Metal, Pottery & Glass",
+    "paper": "Paper",
+    "cloth": "Cloth",
+    "harmful": "Hazardous Waste",
+    "small_electronics": "Small Rechargeable Batteries",
+    "pruned_branches": "Pruned Branches"
   },
   "weekdays": {
     "sun": "Sun",

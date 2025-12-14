@@ -67,7 +67,12 @@
     "cooking_oil": "家庭廃食用油",
     "bottles_and_cans": "びん・缶・小型電化製品",
     "resources": "資源物",
-    "metal_pottery_glass": "金属・陶器・ガラス"
+    "metal_pottery_glass": "金属・陶器・ガラス",
+    "paper": "紙類",
+    "cloth": "布類",
+    "harmful": "有害ごみ",
+    "small_electronics": "小型充電式電池類",
+    "pruned_branches": "剪定枝"
   },
   "weekdays": {
     "sun": "日",
